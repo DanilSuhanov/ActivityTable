@@ -29,11 +29,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.roleService = roleService;
 
         if (userService.findUserByUsername("admin") == null) {
-            Role admin = new Role();
-            admin.setAuthority("ADMIN");
-            admin.setUsers(new HashSet<>());
+            Role adminRole = new Role();
+            adminRole.setAuthority("ROLE_ADMIN");
+            adminRole.setUsers(new HashSet<>());
 
-            roleService.saveRole(admin);
+            Role userRole = new Role();
+            userRole.setAuthority("ROLE_USER");
+            userRole.setUsers(new HashSet<>());
+
+            roleService.saveRole(adminRole);
+            roleService.saveRole(userRole);
 
             User user = new User();
             user.setUsername("admin");
@@ -41,7 +46,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             user.setPassword("pass");
             user.setRoles(new HashSet<>());
 
-            user.addRole(admin);
+            user.addRole(adminRole);
+            user.addRole(userRole);
 
             userService.saveUser(user);
         }

@@ -5,8 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
+
+import java.security.Principal;
 
 @Controller
 public class UserController {
@@ -20,14 +24,27 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
+    @GetMapping("/admin/allUsers")
+    public String index(Model model) {
+        model.addAttribute("users", userService.findAll());
+        return "allUsers";
     }
 
-    @GetMapping("/admin/{id}")
-    private String profile(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
-        return "profile";
+    @GetMapping("/admin/new")
+    private String newUser(Model model) {
+        model.addAttribute("user", new User());
+        return "new";
+    }
+
+    @PostMapping("/admin/new")
+    private String saveUser(User user) {
+        userService.saveUser(user);
+        return "redirect:/";
+    }
+
+    @GetMapping("/user")
+    private String profile(Principal principal, Model model) {
+        model.addAttribute("user", userService.findUserByUsername(principal.getName()));
+        return "user";
     }
 }
