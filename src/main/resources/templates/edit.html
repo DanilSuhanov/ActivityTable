@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
-    <title>New User</title>
+    <title>Edit User</title>
 </head>
 <body>
-<form th:action="@{/admin/new}" th:object="${user}" method="post">
+<form th:action="@{/admin/edit}" th:object="${user}" method="post">
+  <label for="id">ID</label>
+  <input readonly type="number" th:field="*{id}" id="id" placeholder="ID">
   <label for="name">Name</label>
   <input type="text" th:field="*{username}" id="name" placeholder="Name">
-    <br>
   <label for="password">Password</label>
   <input type="text" th:field="*{password}" id="password" placeholder="Password">
-    <br>
   <label for="email">Email</label>
   <input type="text" th:field="*{email}" id="email" placeholder="Email">
-    <br>
   <label for="role">Roles</label>
   <select id="role" name="role" multiple>
-      <option value="ROLE_USER">User</option>
-      <option value="ROLE_ADMIN">Admin</option>
+    <option value="ROLE_USER">User</option>
+    <option value="ROLE_ADMIN">Admin</option>
   </select>
-    <br>
-  <input type="submit" value="Create">
+  <input type="submit" value="Update">
 </form>
 <br>
 <a href="/logout">Logout</a>

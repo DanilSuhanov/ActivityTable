@@ -14,6 +14,7 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 @Service("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
@@ -26,22 +27,44 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userService = userService;
         this.roleService = roleService;
 
-        if (userService.findUserByUsername("admin") == null) {
-            Role adminRole = new Role();
-            adminRole.setAuthority("ROLE_ADMIN");
+        preInit();
+    }
+
+    private static String generateString() {
+        return UUID.randomUUID().toString();
+    }
+
+    private void preInit() {
+        Role adminRole = null;
+        Role userRole = null;
+
+        String authorityAdmin = "ROLE_ADMIN";
+        String authorityUser = "ROLE_USER";
+
+        if (roleService.findRoleByAuthority(authorityAdmin) == null) {
+            adminRole = new Role();
+            adminRole.setAuthority(authorityAdmin);
             adminRole.setUsers(new HashSet<>());
 
-            Role userRole = new Role();
-            userRole.setAuthority("ROLE_USER");
+            roleService.addNewRole(adminRole);
+        }
+
+        if (roleService.findRoleByAuthority(authorityUser) == null) {
+            userRole = new Role();
+            userRole.setAuthority(authorityUser);
             userRole.setUsers(new HashSet<>());
 
-            roleService.addNewRole(adminRole);
             roleService.addNewRole(userRole);
+        }
 
+        adminRole = roleService.findRoleByAuthority(authorityAdmin);
+        userRole = roleService.findRoleByAuthority(authorityUser);
+
+        if (userService.findUserByUsername("admin") == null) {
             User user = new User();
             user.setUsername("admin");
             user.setEmail("email");
-            user.setPassword("pass");
+            user.setPassword(generateString());
             user.setRoles(new HashSet<>());
 
             user.addRole(adminRole);

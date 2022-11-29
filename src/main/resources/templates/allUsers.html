@@ -21,13 +21,15 @@
             <td th:text="${user.username}"></td>
             <td th:text="${user.password}"></td>
             <td th:text="${user.email}"></td>
-            <td><a th:href="@{/admin/edit}">Edit</a></td>
-            <td><a th:href="@{/admin/delete}">Delete</a></td>
+            <td><a th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</a></td>
+            <td><a th:href="@{/admin/delete/{id}(id=${user.id})}">Delete</a></td>
         </tr>
         </tbody>
     </table>
     <br>
     <a href="/admin/new">Create new User</a>
+    <br>
+    <a href="/logout">Logout</a>
 </div>
 </body>
 </html>

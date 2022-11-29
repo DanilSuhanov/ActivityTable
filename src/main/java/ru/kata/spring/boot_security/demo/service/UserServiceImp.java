@@ -28,6 +28,19 @@ public class UserServiceImp implements UserService{
 
     @Override
     @Transactional
+    public void editUser(User user) {
+        User oldUser = userRepository.findById(user.getId()).orElse(null);
+        if (oldUser != null) {
+            oldUser.setRoles(user.getRoles());
+            oldUser.setEmail(user.getEmail());
+            oldUser.setPassword(user.getPassword());
+            oldUser.setUsername(user.getUsername());
+            userRepository.save(oldUser);
+        }
+    }
+
+    @Override
+    @Transactional
     public User findUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }

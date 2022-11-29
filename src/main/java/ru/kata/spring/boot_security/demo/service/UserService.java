@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface UserService {
     void addNewUser(User user);
+    void editUser(User user);
     User findUserById(Long id);
     User findUserByUsername(String username);
     List<User> findAll();
