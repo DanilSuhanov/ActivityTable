@@ -5,10 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -37,8 +35,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             userRole.setAuthority("ROLE_USER");
             userRole.setUsers(new HashSet<>());
 
-            roleService.saveRole(adminRole);
-            roleService.saveRole(userRole);
+            roleService.addNewRole(adminRole);
+            roleService.addNewRole(userRole);
 
             User user = new User();
             user.setUsername("admin");
@@ -49,7 +47,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             user.addRole(adminRole);
             user.addRole(userRole);
 
-            userService.saveUser(user);
+            userService.addNewUser(user);
         }
     }
 

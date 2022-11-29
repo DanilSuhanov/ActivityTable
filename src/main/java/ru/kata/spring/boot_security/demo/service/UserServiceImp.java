@@ -20,8 +20,10 @@ public class UserServiceImp implements UserService{
 
     @Override
     @Transactional
-    public void saveUser(User user) {
-        userRepository.save(user);
+    public void addNewUser(User user) {
+        if (userRepository.findUserByUsername(user.getUsername()) == null) {
+            userRepository.save(user);
+        }
     }
 
     @Override
