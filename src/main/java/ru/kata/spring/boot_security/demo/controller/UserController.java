@@ -13,6 +13,7 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     private User buildUserRoles(User user, List<String> stringRoles) {
-        Set<Role> roles = new HashSet<>();
+        List<Role> roles = new ArrayList<>();
         stringRoles.forEach(r -> roles.add(roleService.findRoleByAuthority(r)));
         user.setRoles(roles);
         return user;

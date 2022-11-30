@@ -15,6 +15,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -28,8 +29,6 @@ public class MyUserDetailsService implements UserDetailsService {
     public MyUserDetailsService(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-
-        preInit();
     }
 
     private static String generateString() {
@@ -46,7 +45,7 @@ public class MyUserDetailsService implements UserDetailsService {
         if (roleService.findRoleByAuthority(authorityAdmin) == null) {
             adminRole = new Role();
             adminRole.setAuthority(authorityAdmin);
-            adminRole.setUsers(new HashSet<>());
+            adminRole.setUsers(new ArrayList<>());
 
             roleService.addNewRole(adminRole);
         }
@@ -54,7 +53,7 @@ public class MyUserDetailsService implements UserDetailsService {
         if (roleService.findRoleByAuthority(authorityUser) == null) {
             userRole = new Role();
             userRole.setAuthority(authorityUser);
-            userRole.setUsers(new HashSet<>());
+            userRole.setUsers(new ArrayList<>());
 
             roleService.addNewRole(userRole);
         }
@@ -67,7 +66,7 @@ public class MyUserDetailsService implements UserDetailsService {
             user.setUsername("admin");
             user.setEmail("email");
             user.setPassword(generateString());
-            user.setRoles(new HashSet<>());
+            user.setRoles(new ArrayList<>());
 
             user.addRole(adminRole);
             user.addRole(userRole);
