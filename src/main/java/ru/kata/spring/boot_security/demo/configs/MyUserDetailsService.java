@@ -1,12 +1,14 @@
 package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -17,13 +19,13 @@ import java.util.HashSet;
 import java.util.UUID;
 
 @Service("userDetailsService")
-public class CustomUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
     private final RoleService roleService;
 
     @Autowired
-    public CustomUserDetailsService(UserService userService, RoleService roleService) {
+    public MyUserDetailsService(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
 
