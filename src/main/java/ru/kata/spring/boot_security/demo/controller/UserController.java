@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -31,8 +32,17 @@ public class UserController {
     }
 
     @GetMapping("/admin")
-    public String index(Model model) {
-        model.addAttribute("users", userService.findAll());
+    public String index(Model model, Principal principal) {
+        List<User> users = userService.findAll();
+        User admin = users.stream()
+                .filter(user -> user.getUsername().equals(principal.getName()))
+                .findFirst().orElse(null);
+        model.addAttribute("users", users);
+        model.addAttribute("admin", admin);
+        model.addAttribute("roles", admin.getRoles()
+                .stream().map(Role::getAuthority)
+                .map(s -> s.replace("ROLE_", ""))
+                .collect(Collectors.toList()));
         return "allUsers";
     }
 
