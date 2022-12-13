@@ -33,13 +33,16 @@
                 <div class="card-body">
                     <blockquote class="blockquote mb-0">
                         <div>
-                            <table>
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>Id</th>
                                     <th>Name</th>
                                     <th>Password</th>
                                     <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -48,8 +51,9 @@
                                     <td th:text="${user.username}"></td>
                                     <td th:text="${user.password}"></td>
                                     <td th:text="${user.email}"></td>
-                                    <td><a th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</a></td>
-                                    <td><a th:href="@{/admin/delete/{id}(id=${user.id})}">Delete</a></td>
+                                    <td th:text="${#strings.listJoin(roles, ' ')}"></td>
+                                    <td><button type="button" class="btn btn-primary" th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</button></td>
+                                    <td><button type="button" class="btn btn-danger" th:href="@{/admin/delete/{id}(id=${user.id})}">Delete</button></td>
                                 </tr>
                                 </tbody>
                             </table>
