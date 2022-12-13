@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.Util;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
@@ -14,10 +15,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -39,16 +37,16 @@ public class UserController {
                 .findFirst().orElse(null);
         model.addAttribute("users", users);
         model.addAttribute("admin", admin);
-        model.addAttribute("roles", admin.getRoles()
-                .stream().map(Role::getAuthority)
-                .map(s -> s.replace("ROLE_", ""))
-                .collect(Collectors.toList()));
+        model.addAttribute("roles", Util.getAuthorise(admin.getRoles()));
         return "allUsers";
     }
 
     @GetMapping("/admin/new")
-    private String newUser(Model model) {
+    private String newUser(Model model, Principal principal) {
+        User admin = userService.findUserByUsername(principal.getName());
         model.addAttribute("user", new User());
+        model.addAttribute("admin", admin);
+        model.addAttribute("roles", Util.getAuthorise(admin.getRoles()));
         return "new";
     }
 
@@ -85,7 +83,9 @@ public class UserController {
 
     @GetMapping("/user")
     private String profile(Principal principal, Model model) {
-        model.addAttribute("user", userService.findUserByUsername(principal.getName()));
+        User user = userService.findUserByUsername(principal.getName());
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Util.getAuthorise(user.getRoles()));
         return "user";
     }
 }

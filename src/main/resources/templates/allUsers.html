@@ -2,65 +2,75 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>Spring Security Example</title>
+    <title>Admin Panel</title>
+    <style>
+        html,body{
+            height:100%;
+        }
+
+        .flex-fill {
+            flex:1;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark">
     <span class="navbar-brand" style="color:#f5f5f5" th:utext="'<b>' + ${admin.username} + '</b>' + ' with roles: ' + ${#strings.listJoin(roles, ' ')}"></span>
     <a href="/logout" class="navbar-text">Logout</a>
 </nav>
-<main class="container-fluid">
-    <div class="row">
-        <div class="col-2 col-md-2 col-xl-2 px-sm-2 px-0">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
-                <p style="margin-top: 10px">TEXT</p>
-            </div>
+<main class="container-fluid d-flex h-100 flex-column">
+    <div class="row flex-fill">
+        <div style="margin-top: 10px; margin-left: -15px; margin-right: -15px" class="col-2">
+                <div class="nav flex-column" aria-orientation="vertical">
+                    <a th:href="@{/admin}" class="btn btn-primary text-light text-left" type="button">Admin</a>
+                    <a th:href="@{/user}" class="btn btn-light text-primary text-left" type="button">User</a>
+                </div>
         </div>
         <div class="col-10 bg-light">
             <h1 style="margin-top: 10px">Admin panel</h1>
             <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/admin">Users table</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/admin/new">New User</a>
-                </li>
-            </ul>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/admin">Users table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/admin/new">New User</a>
+                    </li>
+                </ul>
             <div class="card">
-                <h5 class="card-header">
-                    All users
-                </h5>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <div>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Password</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Edit</th>
-                                    <th>Delete</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="user:${users}">
-                                    <td th:text="${user.id}"></td>
-                                    <td th:text="${user.username}"></td>
-                                    <td th:text="${user.password}"></td>
-                                    <td th:text="${user.email}"></td>
-                                    <td th:text="${#strings.listJoin(roles, ' ')}"></td>
-                                    <td><button type="button" class="btn btn-primary" th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</button></td>
-                                    <td><button type="button" class="btn btn-danger" th:href="@{/admin/delete/{id}(id=${user.id})}">Delete</button></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </blockquote>
+                    <h5 class="card-header">
+                        All users
+                    </h5>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <div>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Password</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="user:${users}">
+                                        <td th:text="${user.id}"></td>
+                                        <td th:text="${user.username}"></td>
+                                        <td th:text="${user.password}"></td>
+                                        <td th:text="${user.email}"></td>
+                                        <td th:text="${#strings.listJoin(T(ru.kata.spring.boot_security.demo.Util).getAuthorise(user.roles), ' ')}"></td>
+                                        <td><a type="button" class="btn btn-primary" th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</a></td>
+                                        <td><a type="button" class="btn btn-danger" th:href="@{/admin/delete/{id}(id=${user.id})}">Delete</a></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </blockquote>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </main>

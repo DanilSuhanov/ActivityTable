@@ -29,6 +29,8 @@ public class MyUserDetailsService implements UserDetailsService {
     public MyUserDetailsService(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
+
+        preInit();
     }
 
     private static String generateString() {
