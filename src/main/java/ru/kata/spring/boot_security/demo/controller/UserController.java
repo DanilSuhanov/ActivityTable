@@ -63,15 +63,9 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/admin/edit/{id}")
-    private String editUser(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
-        return "edit";
-    }
-
     @PostMapping("/admin/edit")
-    private String editUserPost(User user, @RequestParam("role") List<String> stringRoles) {
-        userService.editUser(buildUserRoles(user, stringRoles));
+    private String editUserPost(@RequestParam("id") Long id, @RequestParam("name") String name, @RequestParam("password") String password, @RequestParam("email") String email, @RequestParam("role") List<String> stringRoles) {
+        userService.editUser(buildUserRoles(new User(id, name, password, email), stringRoles));
         return "redirect:/admin";
     }
 

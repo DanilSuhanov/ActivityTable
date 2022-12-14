@@ -23,6 +23,13 @@ public class User implements UserDetails {
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Role> roles = new ArrayList<>();
 
+    public User(Long id, String username, String password, String email) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
     public void addRole(Role role) {
         this.roles.add(role);
     }
