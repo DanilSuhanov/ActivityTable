@@ -47,7 +47,6 @@ public class MyUserDetailsService implements UserDetailsService {
         if (roleService.findRoleByAuthority(authorityAdmin) == null) {
             adminRole = new Role();
             adminRole.setAuthority(authorityAdmin);
-            adminRole.setUsers(new ArrayList<>());
 
             roleService.addNewRole(adminRole);
         }
@@ -55,7 +54,6 @@ public class MyUserDetailsService implements UserDetailsService {
         if (roleService.findRoleByAuthority(authorityUser) == null) {
             userRole = new Role();
             userRole.setAuthority(authorityUser);
-            userRole.setUsers(new ArrayList<>());
 
             roleService.addNewRole(userRole);
         }

@@ -16,9 +16,6 @@ public class Role implements GrantedAuthority {
     @Column
     private String authority;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, mappedBy = "roles")
-    private List<User> users = new ArrayList<>();
-
     @Override
     public String getAuthority() {
         return authority;
@@ -32,10 +29,9 @@ public class Role implements GrantedAuthority {
     public Role() {
     }
 
-    public Role(Long id, String authority, List<User> users) {
+    public Role(Long id, String authority) {
         this.id = id;
         this.authority = authority;
-        this.users = users;
     }
 
     public Long getId() {
@@ -50,24 +46,16 @@ public class Role implements GrantedAuthority {
         this.authority = authority;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return Objects.equals(id, role.id) && Objects.equals(authority, role.authority) && Objects.equals(users, role.users);
+        return Objects.equals(id, role.id) && Objects.equals(authority, role.authority);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, authority, users);
+        return Objects.hash(id, authority);
     }
 }

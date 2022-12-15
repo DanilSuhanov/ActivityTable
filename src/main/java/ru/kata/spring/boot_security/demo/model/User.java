@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.kata.spring.boot_security.demo.Util;
 
 import javax.persistence.*;
 import java.util.*;
@@ -20,8 +21,22 @@ public class User implements UserDetails {
 
     private String email;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "roleId"))
     private List<Role> roles = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + Util.getAuthorise(roles) +
+                '}';
+    }
 
     public User(Long id, String username, String password, String email) {
         this.id = id;

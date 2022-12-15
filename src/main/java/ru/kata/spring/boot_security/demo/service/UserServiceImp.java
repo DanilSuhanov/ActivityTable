@@ -59,6 +59,18 @@ public class UserServiceImp implements UserService{
     @Override
     @Transactional
     public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        if (exist(id))
+            userRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void update(User user) {
+        if (exist(user.getId()))
+            userRepository.save(user);
+    }
+
+    private boolean exist(Long id) {
+        return userRepository.findById(id).isPresent();
     }
 }
