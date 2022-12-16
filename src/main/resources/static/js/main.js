@@ -12,9 +12,7 @@ const userFetch = {
     findUser: async () => await fetch(`api/user`),
     findAllUsers: async () => await fetch('api/users'),
     addNewUser: async (user) => await fetch('api/users', {method: 'POST', headers: userFetch.head, body: JSON.stringify(user)}),
-    findOneUser: async (id) => await fetch(`api/users/${id}`),
-    updateUser: async (user, id) => await fetch(`api/users/${id}`, {method: 'PUT', headers: userFetch.head, body: JSON.stringify(user)}),
-    deleteUser: async (id) => await fetch(`api/users/${id}`, {method: 'DELETE', headers: userFetch.head})
+    findOneUser: async (id) => await fetch(`api/users/${id}`)
 }
 
 async function header() {
@@ -112,8 +110,8 @@ async function table() {
     }
 }
 
-function editModal(userId) {
-    userFetch.findOneUser(userId)
+async function editModal(userId) {
+    await userFetch.findOneUser(userId)
         .then(res => res.json())
         .then(user => {
             document.querySelector('#mod-con').innerHTML = `<div class="modal-header">
@@ -157,11 +155,57 @@ function editModal(userId) {
                         <div id="editButton" class="btn btn btn-success">Edit</div>
                     </div>
                 </form>`;
+            editPost();
         })
 }
 
-function deleteModal(userId) {
-    console.log('delete - ' + userId);
+async function deleteModal(userId) {
+    await userFetch.findOneUser(userId)
+        .then(res => res.json())
+        .then(user => {
+            document.querySelector('#mod-con').innerHTML = `<div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete user</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <form>
+                    <div class="modal-body text-center mx-auto" style="width: 50%">
+
+                        <div class="mb-3">
+                            <label for="userId"><b>ID</b></label>
+                            <input class="form-control" type="number" value="${user.id}" id="userId" name="id" placeholder="ID" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="delete_name"><b>Name</b></label>
+                            <input class="form-control" type="text" value="${user.username}" id="delete_name" name="name" placeholder="Name" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="delete_password"><b>Password</b></label>
+                            <input class="form-control" type="password" value="${user.password}" id="delete_password" name="password" placeholder="Password" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="delete_email"><b>Email</b></label>
+                            <input class="form-control" type="email" value="${user.email}" id="delete_email" name="email" placeholder="Email" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="delete_select"><b>Role</b></label>
+                            <br>
+                            <select style="width: 100%" id="delete_select" class="form-control select" multiple size="2" name="role" disabled>
+                                <option value="ROLE_USER">User</option>
+                                <option value="ROLE_ADMIN">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <div id="deleteButton" class="btn btn-danger">Delete</div>
+                    </div>
+                </form>`;
+            deletePost();
+        })
 }
 
 async function funcSwitch() {
