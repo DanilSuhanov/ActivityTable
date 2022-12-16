@@ -30,29 +30,18 @@ public class UserController {
     }
 
     @GetMapping("/admin")
-    public String index(Model model, Principal principal) {
-        List<User> users = userService.findAll();
-        User admin = users.stream()
-                .filter(user -> user.getUsername().equals(principal.getName()))
-                .findFirst().orElse(null);
-        model.addAttribute("users", users);
-        model.addAttribute("admin", admin);
-        model.addAttribute("roles", Util.getAuthorise(admin.getRoles()));
+    public String index() {
         return "allUsers";
     }
 
-    @GetMapping("/admin/new")
-    private String newUser(Model model, Principal principal) {
-        User admin = userService.findUserByUsername(principal.getName());
-        model.addAttribute("user", new User());
-        model.addAttribute("admin", admin);
-        model.addAttribute("roles", Util.getAuthorise(admin.getRoles()));
-        return "new";
+    @GetMapping("/user")
+    public String userIndex() {
+        return "allUsers";
     }
 
     @PostMapping("/admin/new")
-    private String saveUser(User user, @RequestParam("role") List<String> stringRoles) {
-        userService.addNewUser(buildUserRoles(user, stringRoles));
+    private String saveUser(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email, @RequestParam("role") List<String> stringRoles) {
+        userService.addNewUser(buildUserRoles(new User(username, password, email), stringRoles));
         return "redirect:/admin";
     }
 
@@ -73,13 +62,5 @@ public class UserController {
     public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteUserById(id);
         return "redirect:/admin";
-    }
-
-    @GetMapping("/user")
-    private String profile(Principal principal, Model model) {
-        User user = userService.findUserByUsername(principal.getName());
-        model.addAttribute("user", user);
-        model.addAttribute("roles", Util.getAuthorise(user.getRoles()));
-        return "user";
     }
 }

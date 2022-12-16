@@ -29,7 +29,7 @@ public class UserApiController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<ExceptionInfo> createUser(@RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<ExceptionInfo> createUser(@RequestBody User user) {
         userService.addNewUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class UserApiController {
     @GetMapping("users/{id}")
     public ResponseEntity<User> getUser (@PathVariable("id") Long id) {
         User user = userService.findUserById(id);
-        return new ResponseEntity<>(user,HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/user")
