@@ -1,19 +1,16 @@
-package ru.kata.spring.boot_security.demo.controller;
+package ru.suhanov.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.Util;
-import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.RoleService;
-import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.suhanov.model.Role;
+import ru.suhanov.model.User;
+import ru.suhanov.service.interfaces.RoleService;
+import ru.suhanov.service.interfaces.UserService;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 

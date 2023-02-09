@@ -1,13 +1,12 @@
-package ru.kata.spring.boot_security.demo.controller;
+package ru.suhanov.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.exception.ExceptionInfo;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.suhanov.exception.ExceptionInfo;
+import ru.suhanov.model.User;
+import ru.suhanov.service.interfaces.UserService;
 
 import java.security.Principal;
 import java.util.List;

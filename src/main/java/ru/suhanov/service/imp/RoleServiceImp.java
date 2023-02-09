@@ -1,9 +1,10 @@
-package ru.kata.spring.boot_security.demo.service;
+package ru.suhanov.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.repositoty.RoleRepository;
+import ru.suhanov.model.Role;
+import ru.suhanov.repositoty.RoleRepository;
+import ru.suhanov.service.interfaces.RoleService;
 
 import javax.transaction.Transactional;
 import java.util.List;

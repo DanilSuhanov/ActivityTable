@@ -1,6 +1,6 @@
-package ru.kata.spring.boot_security.demo.service;
+package ru.suhanov.service.interfaces;
 
-import ru.kata.spring.boot_security.demo.model.User;
+import ru.suhanov.model.User;
 
 import java.util.List;
 

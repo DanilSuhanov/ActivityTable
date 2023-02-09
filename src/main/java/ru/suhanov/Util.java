@@ -1,6 +1,6 @@
-package ru.kata.spring.boot_security.demo;
+package ru.suhanov;
 
-import ru.kata.spring.boot_security.demo.model.Role;
+import ru.suhanov.model.Role;
 
 import java.util.List;
 import java.util.stream.Collectors;

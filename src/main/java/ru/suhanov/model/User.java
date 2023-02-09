@@ -1,8 +1,8 @@
-package ru.kata.spring.boot_security.demo.model;
+package ru.suhanov.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.kata.spring.boot_security.demo.Util;
+import ru.suhanov.Util;
 
 import javax.persistence.*;
 import java.util.*;

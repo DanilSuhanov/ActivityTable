@@ -1,15 +1,16 @@
-package ru.kata.spring.boot_security.demo.service;
+package ru.suhanov.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repositoty.UserRepository;
+import ru.suhanov.model.User;
+import ru.suhanov.repositoty.UserRepository;
+import ru.suhanov.service.interfaces.UserService;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-public class UserServiceImp implements UserService{
+public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
 
