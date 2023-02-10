@@ -27,6 +27,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "roleId"))
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany
+    private List<User> subordinates = new ArrayList<>();
+
     @Override
     public String toString() {
         return "User{" +
