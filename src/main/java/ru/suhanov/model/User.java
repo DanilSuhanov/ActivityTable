@@ -50,7 +50,11 @@ public class User implements UserDetails {
     }
 
     public void addRole(Role role) {
-        this.roles.add(role);
+        roles.add(role);
+    }
+
+    public void addSubordinates(User user) {
+        subordinates.add(user);
     }
 
     @Override
@@ -112,6 +116,14 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<User> getSubordinates() {
+        return subordinates;
+    }
+
+    public void setSubordinates(List<User> subordinates) {
+        this.subordinates = subordinates;
     }
 
 

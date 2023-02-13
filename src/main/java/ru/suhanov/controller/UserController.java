@@ -12,6 +12,7 @@ import ru.suhanov.model.User;
 import ru.suhanov.service.interfaces.RoleService;
 import ru.suhanov.service.interfaces.UserService;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 

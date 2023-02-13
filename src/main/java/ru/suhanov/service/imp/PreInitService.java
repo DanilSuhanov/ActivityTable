@@ -9,6 +9,9 @@ import ru.suhanov.service.interfaces.RoleService;
 import ru.suhanov.service.interfaces.UserService;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class PreInitService {
@@ -58,12 +61,28 @@ public class PreInitService {
             User user = new User();
             user.setUsername("admin");
             user.setPassword(generateString());
-            user.setRoles(new ArrayList<>());
 
             user.addRole(adminRole);
             user.addRole(userRole);
 
             userService.addNewUser(user);
+
+            List<User> subs = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                subs.add(getRandomUser(userRole));
+                userService.addNewUser(subs.get(i));
+                user.addSubordinates(subs.get(i));
+            }
+
+            userService.update(user);
         }
+    }
+
+    private User getRandomUser(Role role) {
+        User user = new User();
+        user.setUsername("User " + ThreadLocalRandom.current().nextInt(0, 100));
+        user.setPassword(UUID.randomUUID().toString());
+        user.addRole(role);
+        return user;
     }
 }
