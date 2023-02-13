@@ -57,7 +57,6 @@ public class PreInitService {
         if (userService.findUserByUsername("admin") == null) {
             User user = new User();
             user.setUsername("admin");
-            user.setEmail("email");
             user.setPassword(generateString());
             user.setRoles(new ArrayList<>());
 

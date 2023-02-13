@@ -19,8 +19,6 @@ public class User implements UserDetails {
 
     private String password;
 
-    private String email;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "userId"),
@@ -36,22 +34,19 @@ public class User implements UserDetails {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
                 ", roles=" + Util.getAuthorise(roles) +
                 '}';
     }
 
-    public User(Long id, String username, String password, String email) {
+    public User(Long id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 
-    public User(String username, String password, String email) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 
     public void addRole(Role role) {
@@ -86,11 +81,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String username, String password, String email, List<Role> roles) {
+    public User(Long id, String username, String password, List<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.email = email;
         this.roles = roles;
     }
 
@@ -120,13 +114,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public List<Role> getRoles() {
         return roles;
@@ -141,11 +128,11 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(roles, user.roles);
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, email, roles);
+        return Objects.hash(id, username, password, roles);
     }
 }

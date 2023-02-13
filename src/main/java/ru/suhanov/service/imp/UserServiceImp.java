@@ -33,7 +33,6 @@ public class UserServiceImp implements UserService {
         User oldUser = userRepository.findById(user.getId()).orElse(null);
         if (oldUser != null) {
             oldUser.setRoles(user.getRoles());
-            oldUser.setEmail(user.getEmail());
             oldUser.setPassword(user.getPassword());
             oldUser.setUsername(user.getUsername());
             userRepository.save(oldUser);
