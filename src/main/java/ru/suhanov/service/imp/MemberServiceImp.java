@@ -6,6 +6,8 @@ import ru.suhanov.model.Member;
 import ru.suhanov.repositoty.MemberRepository;
 import ru.suhanov.service.interfaces.MemberService;
 
+import javax.transaction.Transactional;
+
 @Service
 public class MemberServiceImp implements MemberService {
 
@@ -16,6 +18,7 @@ public class MemberServiceImp implements MemberService {
     }
 
     @Override
+    @Transactional
     public void addNewMember(Member member) {
         memberRepository.save(member);
     }

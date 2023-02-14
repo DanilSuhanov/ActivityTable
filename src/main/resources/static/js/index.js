@@ -1,3 +1,8 @@
+let menuProfile = document.querySelector("#switchProfile");
+let menuTasks = document.querySelector("#switchTasks");
+let menuSubs = document.querySelector("#switchSubs");
+let menuHelp = document.querySelector("#switchHelp");
+
 async function profileLoad() {
     await fetch(`api/user`)
         .then(res => res.json())
@@ -9,11 +14,6 @@ async function profileLoad() {
 }
 
 async function switchMenu() {
-    let menuProfile = document.querySelector("#switchProfile");
-    let menuTasks = document.querySelector("#switchTasks");
-    let menuSubs = document.querySelector("#switchSubs");
-    let menuHelp = document.querySelector("#switchHelp");
-
     let colContent = document.querySelector("#colContent");
 
     const attributeClass = "class";
@@ -21,7 +21,7 @@ async function switchMenu() {
     const passiveValue = "list-group-item list-group-item-action";
 
     menuProfile.onclick = function () {
-        unActive();
+        update();
         menuProfile.setAttribute(attributeClass, activeValue);
 
         switchContent(`<div class="card">
@@ -38,50 +38,56 @@ async function switchMenu() {
         profileLoad();
     }
 
-    menuTasks.onclick = function () {
-        unActive();
+    menuTasks.onclick = async function () {
+        update();
         menuTasks.setAttribute(attributeClass, activeValue);
 
-        switchContent(`<ol class="list-group list-group-numbered">
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                      <div class="fw-bold">Subheading</div>
-                      Content for list item
-                    </div>
-                    <span class="badge bg-primary rounded-pill">14</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                      <div class="fw-bold">Subheading</div>
-                      Content for list item
-                    </div>
-                    <span class="badge bg-primary rounded-pill">14</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                      <div class="fw-bold">Subheading</div>
-                      Content for list item
-                    </div>
-                    <span class="badge bg-primary rounded-pill">14</span>
-                  </li>
-                </ol>`);
+        switchContent(`<ul class="list-group list-group-numbered" id="listContent"></ul>`);
+        let listContent = document.querySelector("#listContent");
+
+        fetch('api/tasks')
+            .then(res => res.json())
+            .then(tasks => {
+                tasks.forEach(task => {
+                    let taskContent = document.createElement("li");
+
+                    let conteiner = document.createElement("div");
+                    conteiner.setAttribute("class", "ms-2 me-auto");
+
+                    let head = document.createElement("div");
+                    head.setAttribute("class", "fw-bold");
+
+                    let p = document.createElement("div");
+
+                    conteiner.appendChild(head);
+                    conteiner.appendChild(p);
+
+                    taskContent.setAttribute("class", "list-group-item d-flex justify-content-between align-items-start");
+
+                    head.textContent = task.title;
+                    p.textContent = task.description;
+
+                    taskContent.appendChild(conteiner);
+                    listContent.appendChild(taskContent);
+                })
+            });
     }
 
     menuSubs.onclick = function () {
-        unActive();
+        update();
         menuSubs.setAttribute(attributeClass, activeValue);
 
         switchContent("");
     }
 
     menuHelp.onclick = function () {
-        unActive();
+        update();
         menuHelp.setAttribute(attributeClass, activeValue);
 
         switchContent("");
     }
 
-    function unActive () {
+    function update () {
         menuProfile.setAttribute(attributeClass, passiveValue);
         menuTasks.setAttribute(attributeClass, passiveValue);
         menuSubs.setAttribute(attributeClass, passiveValue);

@@ -80,9 +80,16 @@ public class PreInitService {
             Task task = new Task();
             task.setTitle("Task1");
             task.setDescription("Description1");
-            task.setCompleteness(50);
+            task.setCompleteness(getRandom());
 
             taskService.addNewTask(task);
+
+            Task task2 = new Task();
+            task2.setTitle("Task2");
+            task2.setDescription("Description2");
+            task2.setCompleteness(getRandom());
+
+            taskService.addNewTask(task2);
 
             Member member = new Member();
             member.setUser(user);
@@ -90,6 +97,13 @@ public class PreInitService {
             member.setTaskRole(TaskRole.Leader);
 
             memberService.addNewMember(member);
+
+            Member member2 = new Member();
+            member2.setUser(user);
+            member2.setTask(task2);
+            member2.setTaskRole(TaskRole.Implementer);
+
+            memberService.addNewMember(member2);
 
             userService.update(user);
         }

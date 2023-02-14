@@ -6,6 +6,8 @@ import ru.suhanov.model.Task;
 import ru.suhanov.repositoty.TaskRepository;
 import ru.suhanov.service.interfaces.TaskService;
 
+import javax.transaction.Transactional;
+
 @Service
 public class TaskServiceImp implements TaskService {
 
@@ -17,6 +19,7 @@ public class TaskServiceImp implements TaskService {
     }
 
     @Override
+    @Transactional
     public void addNewTask(Task task) {
         taskRepository.save(task);
     }

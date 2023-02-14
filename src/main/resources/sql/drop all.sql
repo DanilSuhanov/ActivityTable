@@ -1,0 +1,9 @@
+drop table users_roles;
+drop table users_subordinates;
+drop table user_id;
+drop table member_roles;
+drop table task_role;
+drop table member;
+drop table task;
+drop table users;
+drop table authority;

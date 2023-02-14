@@ -5,11 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
+import ru.suhanov.model.Member;
+import ru.suhanov.model.Task;
 import ru.suhanov.model.User;
 import ru.suhanov.service.interfaces.UserService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -55,5 +58,10 @@ public class UserApiController {
         user.setId(id);
         userService.update(user);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/tasks")
+    public ResponseEntity<List<Task>> getTasks(Principal principal) {
+        return new ResponseEntity<>(userService.parsUser(principal.getName()), HttpStatus.OK);
     }
 }

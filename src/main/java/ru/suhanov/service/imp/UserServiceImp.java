@@ -2,12 +2,15 @@ package ru.suhanov.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.suhanov.model.Member;
+import ru.suhanov.model.Task;
 import ru.suhanov.model.User;
 import ru.suhanov.repositoty.UserRepository;
 import ru.suhanov.service.interfaces.UserService;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -25,6 +28,10 @@ public class UserServiceImp implements UserService {
         if (userRepository.findUserByUsername(user.getUsername()) == null) {
             userRepository.save(user);
         }
+    }
+
+    public List<Task> parsUser(String name) {
+        return findUserByUsername(name).getMembers().stream().map(Member::getTask).collect(Collectors.toList());
     }
 
     @Override
