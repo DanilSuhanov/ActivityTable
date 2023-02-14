@@ -22,11 +22,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration").anonymous()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().successHandler(successUserHandler)
-                .permitAll()
+                .formLogin().successHandler(successUserHandler).permitAll()
+                .loginPage("/login").loginProcessingUrl("/loginPost")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .and()
-                .logout()
-                .permitAll()
+                .logout().permitAll()
                 .and().csrf().disable();
     }
 }
