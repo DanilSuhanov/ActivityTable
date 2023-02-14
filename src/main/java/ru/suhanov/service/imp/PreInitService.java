@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.suhanov.model.*;
-import ru.suhanov.model.enam.TaskRoleAuthority;
+import ru.suhanov.model.enam.TaskRole;
 import ru.suhanov.service.interfaces.*;
 
 import java.util.ArrayList;
@@ -19,16 +19,14 @@ public class PreInitService {
     private final RoleService roleService;
     private final UserService userService;
     private final TaskService taskService;
-    private final TaskRoleService taskRoleService;
     private final MemberService memberService;
 
     @Autowired
-    public PreInitService(PasswordEncoder passwordEncoder, RoleService roleService, UserService userService, TaskService taskService, TaskRoleService taskRoleService, MemberService memberService) {
+    public PreInitService(PasswordEncoder passwordEncoder, RoleService roleService, UserService userService, TaskService taskService, MemberService memberService) {
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
         this.userService = userService;
         this.taskService = taskService;
-        this.taskRoleService = taskRoleService;
         this.memberService = memberService;
 
         preInit();
@@ -86,17 +84,10 @@ public class PreInitService {
 
             taskService.addNewTask(task);
 
-            TaskRole taskRole = new TaskRole();
-            taskRole.setRoleAuthority(TaskRoleAuthority.Executive);
-            taskRole.setTitle("Developer");
-            taskRole.setTask(task);
-
-            taskRoleService.addNewTaskRole(taskRole);
-
             Member member = new Member();
             member.setUser(user);
             member.setTask(task);
-            member.addTaskRole(taskRole);
+            member.setTaskRole(TaskRole.Leader);
 
             memberService.addNewMember(member);
 

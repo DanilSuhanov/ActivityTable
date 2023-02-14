@@ -22,13 +22,6 @@ public class Task {
     @OneToMany(mappedBy="task", fetch = FetchType.LAZY)
     private List<Member> members;
 
-    @OneToMany(mappedBy="task", fetch = FetchType.LAZY)
-    private List<TaskRole> roles = new ArrayList<>();
-
-    public void addRole(TaskRole taskRole) {
-        roles.add(taskRole);
-    }
-
     public void addMember(Member member) {
         members.add(member);
     }
