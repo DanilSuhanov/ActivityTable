@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
@@ -30,9 +30,10 @@
                     <a id="switchTasks" class="list-group-item list-group-item-action">Мои задачи</a>
                     <a id="switchSubs" class="list-group-item list-group-item-action">Назначение задач</a>
                     <a id="switchHelp" class="list-group-item list-group-item-action">Помощь</a>
+                    <a class="list-group-item list-group-item-danger" th:href="@{/logout}">Выйти</a>
                 </div>
             </div>
-            <div class="col">
+            <div class="col" id="colContent">
                 <div class="card">
                     <div class="row g-0">
                         <div class="col">
