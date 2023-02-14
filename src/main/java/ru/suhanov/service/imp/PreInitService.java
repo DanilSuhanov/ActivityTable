@@ -3,10 +3,9 @@ package ru.suhanov.service.imp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.suhanov.model.Role;
-import ru.suhanov.model.User;
-import ru.suhanov.service.interfaces.RoleService;
-import ru.suhanov.service.interfaces.UserService;
+import ru.suhanov.model.*;
+import ru.suhanov.model.enam.TaskRoleAuthority;
+import ru.suhanov.service.interfaces.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,18 @@ public class PreInitService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final UserService userService;
+    private final TaskService taskService;
+    private final TaskRoleService taskRoleService;
+    private final MemberService memberService;
 
     @Autowired
-    public PreInitService(PasswordEncoder passwordEncoder, RoleService roleService, UserService userService) {
+    public PreInitService(PasswordEncoder passwordEncoder, RoleService roleService, UserService userService, TaskService taskService, TaskRoleService taskRoleService, MemberService memberService) {
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
         this.userService = userService;
+        this.taskService = taskService;
+        this.taskRoleService = taskRoleService;
+        this.memberService = memberService;
 
         preInit();
     }
@@ -74,15 +79,40 @@ public class PreInitService {
                 user.addSubordinates(subs.get(i));
             }
 
+            Task task = new Task();
+            task.setTitle("Task1");
+            task.setDescription("Description1");
+            task.setCompleteness(50);
+
+            taskService.addNewTask(task);
+
+            TaskRole taskRole = new TaskRole();
+            taskRole.setRoleAuthority(TaskRoleAuthority.Executive);
+            taskRole.setTitle("Developer");
+            taskRole.setTask(task);
+
+            taskRoleService.addNewTaskRole(taskRole);
+
+            Member member = new Member();
+            member.setUser(user);
+            member.setTask(task);
+            member.addTaskRole(taskRole);
+
+            memberService.addNewMember(member);
+
             userService.update(user);
         }
     }
 
     private User getRandomUser(Role role) {
         User user = new User();
-        user.setUsername("User " + ThreadLocalRandom.current().nextInt(0, 100));
+        user.setUsername("User " + getRandom());
         user.setPassword(UUID.randomUUID().toString());
         user.addRole(role);
         return user;
+    }
+
+    private int getRandom() {
+        return ThreadLocalRandom.current().nextInt(0, 100);
     }
 }

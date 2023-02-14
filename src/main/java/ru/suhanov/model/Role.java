@@ -1,11 +1,13 @@
 package ru.suhanov.model;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@Data
 @Table(name = "authority")
 public class Role implements GrantedAuthority {
 
@@ -31,18 +33,6 @@ public class Role implements GrantedAuthority {
 
     public Role(Long id, String authority) {
         this.id = id;
-        this.authority = authority;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setAuthority(String authority) {
         this.authority = authority;
     }
 

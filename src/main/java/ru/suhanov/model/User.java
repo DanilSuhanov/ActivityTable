@@ -1,5 +1,6 @@
 package ru.suhanov.model;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.suhanov.Util;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@Data
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -27,6 +29,10 @@ public class User implements UserDetails {
 
     @OneToMany
     private List<User> subordinates = new ArrayList<>();
+
+    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    private List<Member> members = new ArrayList<>();
+
 
     @Override
     public String toString() {
@@ -92,47 +98,14 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Override
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<User> getSubordinates() {
-        return subordinates;
-    }
-
-    public void setSubordinates(List<User> subordinates) {
-        this.subordinates = subordinates;
-    }
-
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
     }
 
     @Override
