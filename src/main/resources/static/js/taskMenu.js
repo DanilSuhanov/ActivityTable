@@ -17,6 +17,7 @@ function menuTaskLoad(colContent) {
 
                     let card = createCard();
                     let messageForm = createMessageForm();
+                    let messageList = createMessageList();
 
                     colContent.innerHTML = "";
                     colContent.appendChild(card.main);
@@ -24,6 +25,7 @@ function menuTaskLoad(colContent) {
                     card.title.textContent = task.title;
                     card.text.textContent = task.description;
 
+                    colContent.appendChild(messageList);
                     colContent.appendChild(messageForm.main);
 
                     fetch('api/task/' + task.id + '/member')
@@ -72,11 +74,32 @@ function createMessageForm() {
     input.setAttribute("placeholder", "Ввод заметок по задаче");
     container.appendChild(input);
     form.appendChild(container);
+    let button = document.createElement("div");
+    button.setAttribute("class", "btn btn-success w-100");
+    button.textContent = "Отправить заметку";
+    container.appendChild(button);
+
 
     return {
         main: form,
+        button: button,
         input: input
     };
+}
+
+function createMessageList() {
+    let list = document.createElement("ul");
+    list.setAttribute("class", "list-group");
+
+    return list;
+}
+
+function createMessage(text) {
+    let message = document.createElement("li");
+    message.setAttribute("class", "list-group-item");
+    message.textContent = text;
+
+    return message;
 }
 
 function createTaskElement() {
