@@ -2,7 +2,9 @@ package ru.suhanov.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.suhanov.model.Member;
 import ru.suhanov.model.Task;
+import ru.suhanov.model.User;
 import ru.suhanov.repositoty.TaskRepository;
 import ru.suhanov.service.interfaces.TaskService;
 
@@ -22,5 +24,13 @@ public class TaskServiceImp implements TaskService {
     @Transactional
     public void addNewTask(Task task) {
         taskRepository.save(task);
+    }
+
+    @Override
+    @Transactional
+    public Member findMemberByUserAndTaskId(User user, long taskId) {
+        Task task = taskRepository.findTaskById(taskId);
+        return task.getMembers().stream().filter(member -> member.getUser().equals(user))
+                .findFirst().orElse(null);
     }
 }

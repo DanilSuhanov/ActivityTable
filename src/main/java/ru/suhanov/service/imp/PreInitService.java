@@ -94,14 +94,14 @@ public class PreInitService {
             Member member = new Member();
             member.setUser(user);
             member.setTask(task);
-            member.setTaskRole(TaskRole.Leader);
+            member.setTaskRole(TaskRole.Руководитель);
 
             memberService.addNewMember(member);
 
             Member member2 = new Member();
             member2.setUser(user);
             member2.setTask(task2);
-            member2.setTaskRole(TaskRole.Implementer);
+            member2.setTaskRole(TaskRole.Исполнитель);
 
             memberService.addNewMember(member2);
 
