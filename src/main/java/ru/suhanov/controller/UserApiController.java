@@ -6,14 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
-import ru.suhanov.model.Task;
+import ru.suhanov.model.task.Task;
 import ru.suhanov.model.User;
+import ru.suhanov.model.task.TaskMessage;
+import ru.suhanov.service.interfaces.MemberService;
+import ru.suhanov.service.interfaces.TaskMessageService;
 import ru.suhanov.service.interfaces.TaskService;
 import ru.suhanov.service.interfaces.UserService;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -21,11 +24,15 @@ public class UserApiController {
 
     private final UserService userService;
     private final TaskService taskService;
+    private final MemberService memberService;
+    private final TaskMessageService taskMessageService;
 
     @Autowired
-    public UserApiController(UserService userService, TaskService taskService) {
+    public UserApiController(UserService userService, TaskService taskService, MemberService memberService, TaskMessageService taskMessageService) {
         this.userService = userService;
         this.taskService = taskService;
+        this.memberService = memberService;
+        this.taskMessageService = taskMessageService;
     }
 
     @GetMapping("/users")
@@ -33,11 +40,6 @@ public class UserApiController {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<ExceptionInfo> createUser(@RequestBody User user) {
-        userService.addNewUser(user);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
     @DeleteMapping("/users/{id}")
     public ResponseEntity<ExceptionInfo> pageDelete(@PathVariable("id") Long id) {
         userService.deleteUserById(id);
@@ -72,5 +74,18 @@ public class UserApiController {
     public ResponseEntity<Member> getMemberByTask(Principal principal, @PathVariable long id) {
         return new ResponseEntity<>(taskService.findMemberByUserAndTaskId(userService
                 .findUserByUsername(principal.getName()), id), HttpStatus.OK);
+    }
+
+    @PostMapping("/task/{id}/message")
+    public ResponseEntity<ExceptionInfo> createNewTaskMessage(@PathVariable long id, Principal principal, @RequestBody String content) {
+        TaskMessage taskMessage = new TaskMessage();
+        taskMessage.setTask(taskService.findTaskById(id));
+        taskMessage.setDate(new Date());
+        taskMessage.setMember(taskService.findMemberByUserAndTaskId(userService
+                .findUserByUsername(principal.getName()), id));
+        taskMessage.setContent(content);
+        taskMessageService.addNewTaskMessage(taskMessage);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,8 +1,6 @@
 package ru.suhanov;
 
 import ru.suhanov.model.Role;
-import ru.suhanov.model.Task;
-import ru.suhanov.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;

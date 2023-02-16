@@ -1,6 +1,6 @@
 package ru.suhanov.service.interfaces;
 
-import ru.suhanov.model.Task;
+import ru.suhanov.model.task.Task;
 import ru.suhanov.model.User;
 
 import java.util.List;

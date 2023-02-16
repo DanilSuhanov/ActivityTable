@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.suhanov.model.*;
 import ru.suhanov.model.enam.TaskRole;
+import ru.suhanov.model.task.Task;
 import ru.suhanov.service.interfaces.*;
 
 import java.util.ArrayList;

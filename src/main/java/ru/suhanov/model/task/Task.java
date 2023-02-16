@@ -1,6 +1,7 @@
-package ru.suhanov.model;
+package ru.suhanov.model.task;
 
 import lombok.Data;
+import ru.suhanov.model.Member;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ public class Task {
 
     @OneToMany(mappedBy="task", fetch = FetchType.LAZY)
     private List<Member> members;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    private List<TaskMessage> taskMessages;
 
     public void addMember(Member member) {
         members.add(member);

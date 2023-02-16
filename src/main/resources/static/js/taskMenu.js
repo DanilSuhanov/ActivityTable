@@ -32,10 +32,27 @@ function menuTaskLoad(colContent) {
                         .then(res => res.json())
                         .then(member => {
                             card.header.textContent = 'Ваша роль в задаче - ' + member.taskRole;
+
+                            messageForm.button.onclick = function () {
+                                if (messageForm.input.value === "") {
+                                    console.log("Не ввел сообщение");
+                                } else {
+                                    sendMessage(task.id, messageForm.input.value);
+                                    messageForm.input.value = "";
+                                }
+                            }
                         });
                 }
             })
         });
+}
+
+function sendMessage(taskId, content) {
+    fetch('api/task/' + taskId + '/message', {
+        method: 'POST',
+        headers: headerFetch,
+        body: content
+    });
 }
 
 function createCard() {

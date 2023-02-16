@@ -13,6 +13,7 @@ public class MemberServiceImp implements MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Autowired
     public MemberServiceImp(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
@@ -21,5 +22,10 @@ public class MemberServiceImp implements MemberService {
     @Transactional
     public void addNewMember(Member member) {
         memberRepository.save(member);
+    }
+
+    @Override
+    public Member findMemberById(long id) {
+        return memberRepository.findMemberById(id);
     }
 }

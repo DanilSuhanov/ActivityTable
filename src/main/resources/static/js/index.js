@@ -3,6 +3,12 @@ let menuTasks = document.querySelector("#switchTasks");
 let menuSubs = document.querySelector("#switchSubs");
 let menuHelp = document.querySelector("#switchHelp");
 
+headerFetch = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Referer': null
+}
+
 async function switchMenu() {
     let colContent = document.querySelector("#colContent");
 

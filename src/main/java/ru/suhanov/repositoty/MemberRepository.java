@@ -6,4 +6,5 @@ import ru.suhanov.model.Member;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
+    Member findMemberById(long id);
 }
