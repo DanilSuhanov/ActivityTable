@@ -1,3 +1,4 @@
+let count = 0;
 async function menuTaskLoad(colContent) {
 
     let username = await (await fetch('api/username')).text();
@@ -42,7 +43,7 @@ async function menuTaskLoad(colContent) {
                                     console.log("Не ввел сообщение");//TODO
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
-                                    messageList.appendChild(createMessage(messageForm.input.value, username).message);
+                                    messageList.appendChild(createMessage(messageForm.input.value, username).main);
                                     messageForm.input.value = "";
                                 }
                             }
@@ -60,7 +61,7 @@ function loadMessages(messageList, taskId) {
                 fetch('api/usernameByMessageId/' + mes.id)
                     .then(username => username.text())
                     .then(usernameText => {
-                        messageList.appendChild(createMessage(mes.content, usernameText).message);
+                        messageList.appendChild(createMessage(mes.content, usernameText).main);
                     });
             });
         });
@@ -131,16 +132,26 @@ function createMessageList() {
 }
 
 function createMessage(text, username) {
-    let message = document.createElement("li");
-    message.setAttribute("class", "list-group-item");
+
+    let main = document.createElement("li");
+    main.setAttribute("class", "list-group-item");
+
+    let message = document.createElement("div");
+    message.setAttribute("id", "mes" + count.toString());
     message.textContent = text;
 
-    let author = document.createElement("span");
-    author.setAttribute("class", "badge bg-secondary");
+    let author = document.createElement("label");
+    author.setAttribute("class", "form-label");
+    author.setAttribute("for", "mes" + count.toString());
     author.textContent = username;
-    message.appendChild(author);
+
+    main.appendChild(author);
+    main.appendChild(message);
+
+    count = count + 1;
 
     return {
+        main: main,
         message: message,
         author: author
     };
