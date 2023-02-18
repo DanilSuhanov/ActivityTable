@@ -88,4 +88,9 @@ public class UserApiController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/task/{id}/messages")
+    public ResponseEntity<List<TaskMessage>> getAllMessages(@PathVariable long id) {
+        return new ResponseEntity<>(taskService.findAllMessagesByTaskId(id), HttpStatus.OK);
+    }
 }

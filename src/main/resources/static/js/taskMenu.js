@@ -19,6 +19,8 @@ function menuTaskLoad(colContent) {
                     let messageForm = createMessageForm();
                     let messageList = createMessageList();
 
+                    loadMessages(messageList, task.id);
+
                     colContent.innerHTML = "";
                     colContent.appendChild(card.main);
 
@@ -35,15 +37,27 @@ function menuTaskLoad(colContent) {
 
                             messageForm.button.onclick = function () {
                                 if (messageForm.input.value === "") {
-                                    console.log("Не ввел сообщение");
+                                    console.log("Не ввел сообщение");//TODO
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
+                                    messageList.appendChild(createMessage(messageForm.input.value));
                                     messageForm.input.value = "";
                                 }
                             }
                         });
                 }
             })
+        });
+}
+
+function loadMessages(messageList, taskId) {
+    fetch('api/task/' + taskId + '/messages')
+        .then(res => res.json())
+        .then(meses => {
+            meses.forEach(mes => {
+                let mesTag = createMessage(mes.content, fetch('api/usernameByMessageId/' + mes.id));
+                messageList.appendChild(mesTag.message);
+            });
         });
 }
 
@@ -111,12 +125,20 @@ function createMessageList() {
     return list;
 }
 
-function createMessage(text) {
+function createMessage(text, username) {
     let message = document.createElement("li");
     message.setAttribute("class", "list-group-item");
     message.textContent = text;
 
-    return message;
+    let author = document.createElement("span");
+    author.setAttribute("class", "badge bg-secondary");
+    author.textContent = username;
+    message.appendChild(author);
+
+    return {
+        message: message,
+        author: author
+    };
 }
 
 function createTaskElement() {
