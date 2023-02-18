@@ -34,10 +34,10 @@ async function switchMenu() {
         profileLoad();
     }
 
-    menuTasks.onclick = function() {
+    menuTasks.onclick = async function() {
         update(attributeClass, passiveValue);
         menuTasks.setAttribute(attributeClass, activeValue);
-        menuTaskLoad(colContent);
+        await menuTaskLoad(colContent);
     }
 
     menuSubs.onclick = function () {

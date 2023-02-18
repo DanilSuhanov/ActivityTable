@@ -99,4 +99,9 @@ public class UserApiController {
         return new ResponseEntity<>(taskMessageService.findTaskMessageById(id)
                 .getMember().getUser().getUsername(), HttpStatus.OK);
     }
+
+    @GetMapping("/username")
+    public ResponseEntity<String> getUsername(Principal principal) {
+        return new ResponseEntity<>(principal.getName(), HttpStatus.OK);
+    }
 }

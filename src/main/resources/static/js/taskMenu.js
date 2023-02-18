@@ -1,4 +1,6 @@
-function menuTaskLoad(colContent) {
+async function menuTaskLoad(colContent) {
+
+    let username = await (await fetch('api/username')).text();
 
     colContent.innerHTML = `<ul class="list-group list-group-numbered" id="listContent"></ul>`;
     let listContent = document.querySelector("#listContent");
@@ -40,7 +42,7 @@ function menuTaskLoad(colContent) {
                                     console.log("Не ввел сообщение");//TODO
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
-                                    messageList.appendChild(createMessage(messageForm.input.value, "Username").message);
+                                    messageList.appendChild(createMessage(messageForm.input.value, username).message);
                                     messageForm.input.value = "";
                                 }
                             }
@@ -56,9 +58,9 @@ function loadMessages(messageList, taskId) {
         .then(meses => {
             meses.forEach(mes => {
                 fetch('api/usernameByMessageId/' + mes.id)
-                    .then(username => {
-                        console.log(username);
-                        messageList.appendChild(createMessage(mes.content, username).message);
+                    .then(username => username.text())
+                    .then(usernameText => {
+                        messageList.appendChild(createMessage(mes.content, usernameText).message);
                     });
             });
         });
