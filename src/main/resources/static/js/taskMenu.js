@@ -40,7 +40,7 @@ function menuTaskLoad(colContent) {
                                     console.log("Не ввел сообщение");//TODO
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
-                                    messageList.appendChild(createMessage(messageForm.input.value));
+                                    messageList.appendChild(createMessage(messageForm.input.value, "Username").message);
                                     messageForm.input.value = "";
                                 }
                             }
@@ -55,8 +55,11 @@ function loadMessages(messageList, taskId) {
         .then(res => res.json())
         .then(meses => {
             meses.forEach(mes => {
-                let mesTag = createMessage(mes.content, fetch('api/usernameByMessageId/' + mes.id));
-                messageList.appendChild(mesTag.message);
+                fetch('api/usernameByMessageId/' + mes.id)
+                    .then(username => {
+                        console.log(username);
+                        messageList.appendChild(createMessage(mes.content, username).message);
+                    });
             });
         });
 }

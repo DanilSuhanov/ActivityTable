@@ -93,4 +93,10 @@ public class UserApiController {
     public ResponseEntity<List<TaskMessage>> getAllMessages(@PathVariable long id) {
         return new ResponseEntity<>(taskService.findAllMessagesByTaskId(id), HttpStatus.OK);
     }
+
+    @GetMapping("/usernameByMessageId/{id}")
+    public ResponseEntity<String> getUsernameByMessageId(@PathVariable long id) {
+        return new ResponseEntity<>(taskMessageService.findTaskMessageById(id)
+                .getMember().getUser().getUsername(), HttpStatus.OK);
+    }
 }

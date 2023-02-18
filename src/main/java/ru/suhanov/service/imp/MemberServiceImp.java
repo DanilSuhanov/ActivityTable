@@ -25,6 +25,7 @@ public class MemberServiceImp implements MemberService {
     }
 
     @Override
+    @Transactional
     public Member findMemberById(long id) {
         return memberRepository.findMemberById(id);
     }
