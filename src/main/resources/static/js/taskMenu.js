@@ -43,7 +43,10 @@ async function menuTaskLoad(colContent) {
                                     console.log("Не ввел сообщение");//TODO
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
-                                    messageList.appendChild(createMessage(messageForm.input.value, username).main);
+
+                                    let messageElement = createMessage(messageForm.input.value, username);
+
+                                    messageList.appendChild(messageElement.main);
                                     messageForm.input.value = "";
                                 }
                             }
@@ -61,7 +64,17 @@ function loadMessages(messageList, taskId) {
                 fetch('api/usernameByMessageId/' + mes.id)
                     .then(username => username.text())
                     .then(usernameText => {
-                        messageList.appendChild(createMessage(mes.content, usernameText).main);
+                        let mesElement = createMessage(mes.content, usernameText, mes.date);
+                        mesElement.deleteButton.onclick = function () {
+                            fetch('api/task/deleteMessageById', {
+                                method: 'POST',
+                                headers: headerFetch,
+                                body: mes.id
+                            });
+                            messageList.removeChild(mesElement.main);
+                        };
+
+                        messageList.appendChild(mesElement.main);
                     });
             });
         });
@@ -133,8 +146,12 @@ function createMessageList() {
 
 function createMessage(text, username) {
 
+    let row = getRow();
+
     let main = document.createElement("li");
     main.setAttribute("class", "list-group-item");
+
+    main.appendChild(row.row);
 
     let message = document.createElement("div");
     message.setAttribute("id", "mes" + count.toString());
@@ -145,15 +162,41 @@ function createMessage(text, username) {
     author.setAttribute("for", "mes" + count.toString());
     author.textContent = username;
 
-    main.appendChild(author);
-    main.appendChild(message);
+    let butt = document.createElement("button");
+    butt.setAttribute("class", "btn btn-danger w-100");
+    butt.textContent = 'Удалить';
+
+    row.col1.appendChild(author);
+    row.col1.appendChild(message);
+    row.col2.appendChild(butt);
 
     count = count + 1;
 
     return {
         main: main,
         message: message,
-        author: author
+        author: author,
+        deleteButton: butt
+    };
+}
+
+function getRow() {
+    let row = document.createElement("div");
+    row.setAttribute("class", "row");
+
+    let col1 = document.createElement("div");
+    col1.setAttribute("class", "col-10");
+
+    let col2 = document.createElement("div");
+    col2.setAttribute("class", "col-2");
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+
+    return {
+        row: row,
+        col1: col1,
+        col2: col2
     };
 }
 

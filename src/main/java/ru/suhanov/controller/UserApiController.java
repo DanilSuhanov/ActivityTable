@@ -104,4 +104,10 @@ public class UserApiController {
     public ResponseEntity<String> getUsername(Principal principal) {
         return new ResponseEntity<>(principal.getName(), HttpStatus.OK);
     }
+
+    @PostMapping("/task/deleteMessageById")
+    public ResponseEntity<ExceptionInfo> deleteMessageById(@RequestBody long id){
+        taskMessageService.deleteTaskMessageById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
