@@ -44,7 +44,7 @@ async function menuTaskLoad(colContent) {
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
 
-                                    let messageElement = createMessage(messageForm.input.value, username);
+                                    let messageElement = createMessage(messageForm.input.value, username, true);
 
                                     messageList.appendChild(messageElement.main);
                                     messageForm.input.value = "";
@@ -64,7 +64,7 @@ function loadMessages(messageList, taskId) {
                 fetch('api/usernameByMessageId/' + mes.id)
                     .then(username => username.text())
                     .then(usernameText => {
-                        let mesElement = createMessage(mes.content, usernameText, mes.date);
+                        let mesElement = createMessage(mes.content, usernameText, false);
                         mesElement.deleteButton.onclick = function () {
                             fetch('api/task/deleteMessageById', {
                                 method: 'POST',
@@ -144,9 +144,9 @@ function createMessageList() {
     return list;
 }
 
-function createMessage(text, username) {
+function createMessage(text, username, isNew) {
 
-    let row = getRow();
+    let row = getRow(10, 2);
 
     let main = document.createElement("li");
     main.setAttribute("class", "list-group-item");
@@ -162,13 +162,19 @@ function createMessage(text, username) {
     author.setAttribute("for", "mes" + count.toString());
     author.textContent = username;
 
+    row.col1.appendChild(author);
+    row.col1.appendChild(message);
+
     let butt = document.createElement("button");
     butt.setAttribute("class", "btn btn-danger w-100");
     butt.textContent = 'Удалить';
 
-    row.col1.appendChild(author);
-    row.col1.appendChild(message);
-    row.col2.appendChild(butt);
+
+    console.log(isNew);
+    if (!isNew) {
+        console.log("Не новый");
+        row.col2.appendChild(butt);
+    }
 
     count = count + 1;
 
@@ -177,26 +183,6 @@ function createMessage(text, username) {
         message: message,
         author: author,
         deleteButton: butt
-    };
-}
-
-function getRow() {
-    let row = document.createElement("div");
-    row.setAttribute("class", "row");
-
-    let col1 = document.createElement("div");
-    col1.setAttribute("class", "col-10");
-
-    let col2 = document.createElement("div");
-    col2.setAttribute("class", "col-2");
-
-    row.appendChild(col1);
-    row.appendChild(col2);
-
-    return {
-        row: row,
-        col1: col1,
-        col2: col2
     };
 }
 

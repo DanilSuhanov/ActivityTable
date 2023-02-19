@@ -110,4 +110,10 @@ public class UserApiController {
         taskMessageService.deleteTaskMessageById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/user/getAllImp")
+    public ResponseEntity<List<User>> findAllImp(Principal principal) {
+        return new ResponseEntity<>(userService.findUserByUsername(principal.getName())
+                .getSubordinates(), HttpStatus.OK);
+    }
 }

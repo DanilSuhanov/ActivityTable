@@ -1,3 +1,5 @@
+let colContent = document.querySelector("#colContent");
+
 let menuProfile = document.querySelector("#switchProfile");
 let menuTasks = document.querySelector("#switchTasks");
 let menuSubs = document.querySelector("#switchSubs");
@@ -9,9 +11,27 @@ headerFetch = {
     'Referer': null
 }
 
-async function switchMenu() {
-    let colContent = document.querySelector("#colContent");
+function getRow(size1, size2) {
+    let row = document.createElement("div");
+    row.setAttribute("class", "row");
 
+    let col1 = document.createElement("div");
+    col1.setAttribute("class", "col-" + size1);
+
+    let col2 = document.createElement("div");
+    col2.setAttribute("class", "col-" + size2);
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+
+    return {
+        row: row,
+        col1: col1,
+        col2: col2
+    };
+}
+
+async function switchMenu() {
     const attributeClass = "class";
     const activeValue = "list-group-item list-group-item-action active"
     const passiveValue = "list-group-item list-group-item-action";
@@ -19,18 +39,6 @@ async function switchMenu() {
     menuProfile.onclick = function () {
         update(attributeClass, passiveValue);
         menuProfile.setAttribute(attributeClass, activeValue);
-
-        colContent.innerHTML = `<div class="card">
-                    <div class="row g-0">
-                        <div class="col">
-                            <div class="card-body">
-                                <h5 class="card-title" id="cardUsername"></h5>
-                                <p class="card-text" id="cardSubordinates"></p>
-                                <p class="card-text"><button type="button" class="btn btn-primary">Изменить ифнормацию</button></p>
-                            </div>
-                        </div>
-                    </div>
-                  </div>`;
         profileLoad();
     }
 
