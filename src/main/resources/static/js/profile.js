@@ -33,7 +33,7 @@ async function profileLoad() {
 
 async function implementMenu() {
     colContent.innerHTML = "";
-    let list = await getListGroup();
+    let list = getList();
 
     colContent.appendChild(list);
 
@@ -44,8 +44,7 @@ async function addImplementersToList(list) {
     let implementers = await (await fetch('api/user/getAllImp')).json();
 
     implementers.forEach(imp => {
-        let li = document.createElement("li");
-        li.setAttribute("class", "list-group-item");
+        let li = getLi();
 
         let row = getRow(10, 2);
         li.appendChild(row.row);
@@ -67,6 +66,26 @@ async function addImplementersToList(list) {
 
         list.appendChild(li);
     });
+
+    let li = getLi();
+    let findButton = document.createElement("button");
+    findButton.setAttribute("class", "btn btn-primary w-100");
+    findButton.textContent = "Найти исполнителей";
+
+    li.appendChild(findButton);
+    list.appendChild(li);
+
+    findButton.onclick = async function() {
+        await findImplementersMenu();
+    };
+}
+
+async function findImplementersMenu() {
+    colContent.innerHTML = "";
+    let form = createSimpleForm("Никнейм исполнителя", "Отправить запрос");
+    colContent.appendChild(form.main);
+
+
 }
 
 async function deleteImpl(imp) {
@@ -75,11 +94,4 @@ async function deleteImpl(imp) {
         headers: headerFetch,
         body: imp.id
     });
-}
-
-async function getListGroup() {
-    let list = document.createElement("ul");
-    list.setAttribute("class", "list-group");
-
-    return list;
 }

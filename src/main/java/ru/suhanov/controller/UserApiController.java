@@ -15,6 +15,7 @@ import ru.suhanov.service.interfaces.TaskService;
 import ru.suhanov.service.interfaces.UserService;
 
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,7 +93,9 @@ public class UserApiController {
 
     @GetMapping("/task/{id}/messages")
     public ResponseEntity<List<TaskMessage>> getAllMessages(@PathVariable long id) {
-        return new ResponseEntity<>(taskService.findAllMessagesByTaskId(id), HttpStatus.OK);
+        return new ResponseEntity<>(taskService.findAllMessagesByTaskId(id)
+                .stream().sorted(Comparator.comparing(TaskMessage::getDate))
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @GetMapping("/usernameByMessageId/{id}")

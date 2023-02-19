@@ -19,8 +19,8 @@ async function menuTaskLoad(colContent) {
                 taskElement.head.onclick = function () {
 
                     let card = createCard();
-                    let messageForm = createMessageForm();
-                    let messageList = createMessageList();
+                    let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
+                    let messageList = getList();
 
                     loadMessages(messageList, task.id);
 
@@ -111,37 +111,6 @@ function createCard() {
         title: cardTitle,
         text: cardText
     };
-}
-
-function createMessageForm() {
-    let form = document.createElement("form");
-    let container = document.createElement("div");
-    container.setAttribute("class", "mb-3");
-    let input = document.createElement("input");
-    input.setAttribute("type", "text");
-    input.setAttribute("class", "form-control");
-    input.setAttribute("id", "messageInput");
-    input.setAttribute("placeholder", "Ввод заметок по задаче");
-    container.appendChild(input);
-    form.appendChild(container);
-    let button = document.createElement("div");
-    button.setAttribute("class", "btn btn-success w-100");
-    button.textContent = "Отправить заметку";
-    container.appendChild(button);
-
-
-    return {
-        main: form,
-        button: button,
-        input: input
-    };
-}
-
-function createMessageList() {
-    let list = document.createElement("ul");
-    list.setAttribute("class", "list-group");
-
-    return list;
 }
 
 function createMessage(text, username, isNew) {
