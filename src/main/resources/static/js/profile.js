@@ -57,10 +57,23 @@ async function addImplementersToList(list) {
         let text = document.createElement("div");
         text.textContent = imp.username;
 
+        deleteImpButton.onclick = async function() {
+            await deleteImpl(imp);
+            list.removeChild(li);
+        };
+
         row.col1.appendChild(text);
         row.col2.appendChild(deleteImpButton);
 
         list.appendChild(li);
+    });
+}
+
+async function deleteImpl(imp) {
+    await fetch('api/user/implement/delete', {
+        method: 'POST',
+        headers: headerFetch,
+        body: imp.id
     });
 }
 

@@ -17,6 +17,7 @@ import ru.suhanov.service.interfaces.UserService;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -115,5 +116,16 @@ public class UserApiController {
     public ResponseEntity<List<User>> findAllImp(Principal principal) {
         return new ResponseEntity<>(userService.findUserByUsername(principal.getName())
                 .getSubordinates(), HttpStatus.OK);
+    }
+
+    @PostMapping("/user/implement/delete")
+    public ResponseEntity<ExceptionInfo> deleteImplement(@RequestBody long id, Principal principal) {
+        User user = userService.findUserByUsername(principal.getName());
+        List<User> implementers = user.getSubordinates().stream()
+                .filter(u -> !u.getId().equals(id)).collect(Collectors.toList());
+        user.setSubordinates(implementers);
+        userService.editUser(user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
