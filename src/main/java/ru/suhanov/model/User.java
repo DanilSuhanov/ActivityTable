@@ -1,9 +1,11 @@
 package ru.suhanov.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.suhanov.Util;
+import ru.suhanov.model.request.ImpRequest;
 
 import javax.persistence.*;
 import java.util.*;
@@ -21,17 +23,28 @@ public class User implements UserDetails {
 
     private String password;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "userId"),
             inverseJoinColumns = @JoinColumn(name = "roleId"))
     private List<Role> roles = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany
-    private List<User> subordinates = new ArrayList<>();
+    private List<User> implementers = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "imp", fetch = FetchType.LAZY)
+    private List<ImpRequest> invites = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
+    private List<ImpRequest> requests = new ArrayList<>();
 
 
     @Override
@@ -60,7 +73,7 @@ public class User implements UserDetails {
     }
 
     public void addSubordinates(User user) {
-        subordinates.add(user);
+        implementers.add(user);
     }
 
     @Override

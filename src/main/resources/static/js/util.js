@@ -34,3 +34,11 @@ function getLi() {
 
     return li;
 }
+
+function setListOnColumn() {
+    colContent.innerHTML = "";
+    let list = getList();
+    colContent.appendChild(list);
+
+    return list;
+}

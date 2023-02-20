@@ -6,13 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
+import ru.suhanov.model.request.ImpRequest;
 import ru.suhanov.model.task.Task;
 import ru.suhanov.model.User;
 import ru.suhanov.model.task.TaskMessage;
-import ru.suhanov.service.interfaces.MemberService;
-import ru.suhanov.service.interfaces.TaskMessageService;
-import ru.suhanov.service.interfaces.TaskService;
-import ru.suhanov.service.interfaces.UserService;
+import ru.suhanov.service.interfaces.*;
 
 import java.security.Principal;
 import java.util.Comparator;
@@ -28,13 +26,15 @@ public class UserApiController {
     private final TaskService taskService;
     private final MemberService memberService;
     private final TaskMessageService taskMessageService;
+    private final ImpRequestService impRequestService;
 
     @Autowired
-    public UserApiController(UserService userService, TaskService taskService, MemberService memberService, TaskMessageService taskMessageService) {
+    public UserApiController(UserService userService, TaskService taskService, MemberService memberService, TaskMessageService taskMessageService, ImpRequestService impRequestService) {
         this.userService = userService;
         this.taskService = taskService;
         this.memberService = memberService;
         this.taskMessageService = taskMessageService;
+        this.impRequestService = impRequestService;
     }
 
     @GetMapping("/users")
@@ -118,17 +118,57 @@ public class UserApiController {
     @GetMapping("/user/getAllImp")
     public ResponseEntity<List<User>> findAllImp(Principal principal) {
         return new ResponseEntity<>(userService.findUserByUsername(principal.getName())
-                .getSubordinates(), HttpStatus.OK);
+                .getImplementers(), HttpStatus.OK);
     }
 
     @PostMapping("/user/implement/delete")
     public ResponseEntity<ExceptionInfo> deleteImplement(@RequestBody long id, Principal principal) {
         User user = userService.findUserByUsername(principal.getName());
-        List<User> implementers = user.getSubordinates().stream()
+        List<User> implementers = user.getImplementers().stream()
                 .filter(u -> !u.getId().equals(id)).collect(Collectors.toList());
-        user.setSubordinates(implementers);
+        user.setImplementers(implementers);
         userService.editUser(user);
 
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/user/implementers/add")
+    public ResponseEntity<ExceptionInfo> addImplementer(@RequestBody String username, Principal principal) {
+        User imp = userService.findUserByUsername(username);
+        if (imp == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            ImpRequest impRequest = new ImpRequest();
+            impRequest.setImp(imp);
+            impRequest.setSender(userService.findUserByUsername(principal.getName()));
+            impRequest.setDate(new Date());
+
+            impRequestService.addNewImpRequest(impRequest);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/user/impInvites")
+    public ResponseEntity<List<ImpRequest>> findAllImpInvites(Principal principal) {
+        return new ResponseEntity<>(userService.findUserByUsername(principal.getName()).getInvites(), HttpStatus.OK);
+    }
+
+    @PostMapping("/user/invite/reject")
+    public ResponseEntity<ExceptionInfo> rejectInvite(@RequestBody long inviteId) {
+        impRequestService.deleteImpRequestById(inviteId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/user/invite/accept")
+    public ResponseEntity<ExceptionInfo> acceptInvite(@RequestBody long inviteId, Principal principal) {
+        ImpRequest impRequest = impRequestService.findRequestById(inviteId);
+        User sender = impRequest.getSender();
+        User imp = userService.findUserByUsername(principal.getName());
+        sender.addSubordinates(imp);
+
+        impRequestService.deleteImpRequestById(impRequest.getId());
+        userService.update(sender);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

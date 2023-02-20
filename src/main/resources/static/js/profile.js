@@ -8,6 +8,7 @@ async function profileLoad() {
                                 <p id="cardText" class="card-text">
                                     <button id="editProfileButton" type="button" class="btn btn-primary">Изменить ифнормацию</button>
                                     <button id="implementButton" type="button" class="btn btn-primary">Исполнители</button>
+                                    <button id="requestButton" type="button" class="btn btn-primary">Заявки на руководство</button>
                                 </p>
                             </div>
                         </div>
@@ -16,6 +17,7 @@ async function profileLoad() {
 
     let editProfileButton = document.querySelector("#editProfileButton");
     let implemetButton = document.querySelector("#implementButton");
+    let requestButton = document.querySelector("#requestButton");
 
     let cardUsername = document.querySelector("#cardUsername");
     let cardImplement = document.querySelector("#cardSubordinates");
@@ -23,26 +25,96 @@ async function profileLoad() {
     let user = await (await fetch(`api/user`)).json();
 
     cardUsername.textContent = user.username;
-    cardImplement.textContent = "Исполнители: " + user.subordinates.map(sub => " " + sub.username);
+
+    let implementers = await (await fetch('api/user/getAllImp')).json();
+
+    if (implementers.length !== 0) {
+        cardImplement.textContent = "Исполнители: ";
+
+        implementers.forEach(imp => {
+            cardImplement.textContent += imp.username + " ";
+        });
+    } else {
+        cardImplement.textContent = "У вас нет исполнителей";
+    }
 
     implemetButton.onclick = async function() {
-        await implementMenu();
+        await implementMenu(implementers);
+    };
+
+    requestButton.onclick = async function() {
+        await requestMenu();
+    };
+}
+
+async function requestMenu() {
+    await addInvitesToList(setListOnColumn());
+}
+
+async function addInvitesToList(list) {
+    let invites = await (await  fetch('api/user/impInvites')).json();
+
+    if (invites.length !== 0) {
+        invites.forEach(invite => {
+            let li = getLi();
+
+            let row = getRow(8, 4);
+            li.appendChild(row.row);
+
+            let name = document.createElement("h5");
+            name.textContent = invite.sender.username;
+            row.col1.appendChild(name);
+
+            let acceptButton = document.createElement("button");
+            acceptButton.setAttribute("class", "btn btn-success w-50");
+            acceptButton.textContent = "Принять";
+
+            let rejectButton = document.createElement("button");
+            rejectButton.setAttribute("class", "btn btn-danger w-50");
+            rejectButton.textContent = "Отклонить";
+
+            row.col2.appendChild(acceptButton);
+            row.col2.appendChild(rejectButton);
+
+            rejectButton.onclick = async function() {
+                await rejectInvites(invite.id);
+                list.removeChild(li);
+            };
+
+            acceptButton.onclick = async function() {
+                await acceptInvites(invite.id);
+                list.removeChild(li);
+            };
+
+            list.appendChild(li);
+        });
+    } else {
+        colContent.innerHTML = '<h3>У вас нет приглашений</h3>';
     }
 }
 
-
-async function implementMenu() {
-    colContent.innerHTML = "";
-    let list = getList();
-
-    colContent.appendChild(list);
-
-    await addImplementersToList(list);
+async function acceptInvites(id) {
+    await fetch('api/user/invite/accept', {
+        method: 'POST',
+        headers: headerFetch,
+        body: id
+    });
 }
 
-async function addImplementersToList(list) {
-    let implementers = await (await fetch('api/user/getAllImp')).json();
+async function rejectInvites(id) {
+    await fetch('api/user/invite/reject', {
+        method: 'POST',
+        headers: headerFetch,
+        body: id
+    });
+}
 
+
+async function implementMenu(implementers) {
+    await addImplementersToList(setListOnColumn(), implementers);
+}
+
+async function addImplementersToList(list, implementers) {
     implementers.forEach(imp => {
         let li = getLi();
 
@@ -85,7 +157,22 @@ async function findImplementersMenu() {
     let form = createSimpleForm("Никнейм исполнителя", "Отправить запрос");
     colContent.appendChild(form.main);
 
+    form.button.onclick = async function() {
+        let findUsername = form.input.value;
+        let susses = await fetch('api/user/implementers/add', {
+            method: 'POST',
+            headers: headerFetch,
+            body: findUsername
+        });
 
+        if (susses.status === 200) {
+            console.log("Успешно!"); //TODO
+        } else {
+            console.log("Такого пользователя не существует");
+        }
+
+        form.input.value = "";
+    };
 }
 
 async function deleteImpl(imp) {

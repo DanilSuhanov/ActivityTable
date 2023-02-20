@@ -53,6 +53,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    @Transactional
     public User findUserByUsername(String username) {
         return userRepository.findUserByUsername(username);
     }

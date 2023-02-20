@@ -138,10 +138,7 @@ function createMessage(text, username, isNew) {
     butt.setAttribute("class", "btn btn-danger w-100");
     butt.textContent = 'Удалить';
 
-
-    console.log(isNew);
     if (!isNew) {
-        console.log("Не новый");
         row.col2.appendChild(butt);
     }
 
