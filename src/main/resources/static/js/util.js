@@ -42,3 +42,18 @@ function setListOnColumn() {
 
     return list;
 }
+
+function getNotice(type, text) {
+    let notice = document.createElement("div");
+    notice.setAttribute("class", "alert alert-" + type);
+    notice.textContent = text;
+
+    return notice;
+}
+
+function addNotice(notice, tag) {
+    tag.appendChild(notice);
+    notice.onclick = function () {
+        tag.removeChild(notice);
+    };
+}

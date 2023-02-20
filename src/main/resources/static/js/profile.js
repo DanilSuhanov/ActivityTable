@@ -166,9 +166,11 @@ async function findImplementersMenu() {
         });
 
         if (susses.status === 200) {
-            console.log("Успешно!"); //TODO
+            let notice = getNotice("success", "Запрос отправлен!");
+            addNotice(notice, colContent);
         } else {
-            console.log("Такого пользователя не существует");
+            let notice = getNotice("danger", "Такого пользователя не существует!")
+            addNotice(notice, colContent);
         }
 
         form.input.value = "";

@@ -40,7 +40,8 @@ async function menuTaskLoad(colContent) {
 
                             messageForm.button.onclick = function () {
                                 if (messageForm.input.value === "") {
-                                    console.log("Не ввел сообщение");//TODO
+                                    let notice = getNotice("danger", "Вы не ввели текст сообщения");
+                                    addNotice(notice, colContent);
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
 
