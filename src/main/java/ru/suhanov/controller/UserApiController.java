@@ -3,6 +3,7 @@ package ru.suhanov.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
@@ -13,9 +14,7 @@ import ru.suhanov.model.task.TaskMessage;
 import ru.suhanov.service.interfaces.*;
 
 import java.security.Principal;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,10 +59,13 @@ public class UserApiController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @PutMapping("/users/{id}")
-    public ResponseEntity<ExceptionInfo> pageEdit(@PathVariable("id") Long id, @RequestBody User user) {
-        user.setId(id);
-        userService.update(user);
+    @PostMapping("/user")
+    public ResponseEntity<ExceptionInfo> pageEdit(@RequestBody Map<String, String> userData, Principal principal) {
+        User user = userService.findUserByUsername(principal.getName());
+        user.setUsername(userData.get("username"));
+        user.setPassword(userData.get("password"));
+
+        userService.editUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

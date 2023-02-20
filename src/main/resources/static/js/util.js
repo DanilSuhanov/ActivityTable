@@ -23,6 +23,7 @@ function createSimpleForm(placeholder, buttonText) {
 
     return {
         main: form,
+        container: container,
         button: button,
         input: input
     };

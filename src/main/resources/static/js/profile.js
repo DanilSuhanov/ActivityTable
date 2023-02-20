@@ -45,6 +45,10 @@ async function profileLoad() {
     requestButton.onclick = async function() {
         await requestMenu();
     };
+
+    editProfileButton.onclick = async function() {
+        await editProfileMenu();
+    };
 }
 
 async function requestMenu() {
