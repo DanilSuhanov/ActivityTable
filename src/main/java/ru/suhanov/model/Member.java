@@ -19,7 +19,7 @@ public class Member {
 
     private TaskRole taskRole;
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinTable(name = "user_id")
     private User user;

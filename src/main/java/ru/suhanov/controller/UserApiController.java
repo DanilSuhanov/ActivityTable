@@ -95,6 +95,9 @@ public class UserApiController {
 
     @GetMapping("/task/{id}/messages")
     public ResponseEntity<List<TaskMessage>> getAllMessages(@PathVariable long id) {
+        taskService.findAllMessagesByTaskId(id)
+                .stream().sorted(Comparator.comparing(TaskMessage::getDate))
+                .collect(Collectors.toList()).forEach(t -> System.out.println(t.getContent()));
         return new ResponseEntity<>(taskService.findAllMessagesByTaskId(id)
                 .stream().sorted(Comparator.comparing(TaskMessage::getDate))
                 .collect(Collectors.toList()), HttpStatus.OK);
@@ -172,5 +175,10 @@ public class UserApiController {
         impRequestService.deleteImpRequestById(impRequest.getId());
         userService.update(sender);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/task/message/{id}/member")
+    public ResponseEntity<Member> getMemberByMessageId(@PathVariable long id) {
+        return new ResponseEntity<>(taskMessageService.findTaskMessageById(id).getMember(), HttpStatus.OK);
     }
 }

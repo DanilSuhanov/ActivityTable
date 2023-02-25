@@ -45,7 +45,9 @@ async function menuTaskLoad(colContent) {
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
 
-                                    let messageElement = createMessage(messageForm.input.value, username, true);
+                                    console.log(member.taskRole);
+
+                                    let messageElement = createMessage(messageForm.input.value, username, member.taskRole, true);
 
                                     messageList.appendChild(messageElement.main);
                                     messageForm.input.value = "";
@@ -61,23 +63,23 @@ function loadMessages(messageList, taskId) {
     fetch('api/task/' + taskId + '/messages')
         .then(res => res.json())
         .then(meses => {
-            meses.forEach(mes => {
-                fetch('api/usernameByMessageId/' + mes.id)
-                    .then(username => username.text())
-                    .then(usernameText => {
-                        let mesElement = createMessage(mes.content, usernameText, false);
+            for(let i = 0; i < meses.length; i++){
+                fetch('api/task/message/' + meses[i].id + '/member')
+                    .then(res => res.json())
+                    .then(member => {
+                        let mesElement = createMessage(meses[i].content, member.user.username, member.taskRole, false);
                         mesElement.deleteButton.onclick = function () {
                             fetch('api/task/deleteMessageById', {
                                 method: 'POST',
                                 headers: headerFetch,
-                                body: mes.id
+                                body: meses[i].id
                             });
                             messageList.removeChild(mesElement.main);
                         };
 
                         messageList.appendChild(mesElement.main);
                     });
-            });
+            }
         });
 }
 
@@ -114,12 +116,17 @@ function createCard() {
     };
 }
 
-function createMessage(text, username, isNew) {
+function createMessage(text, username, role, isNew) {
 
     let row = getRow(10, 2);
 
     let main = document.createElement("li");
-    main.setAttribute("class", "list-group-item");
+
+    if (role === "Руководитель") {
+        main.setAttribute("class", "list-group-item list-group-item-primary");
+    } else {
+        main.setAttribute("class", "list-group-item");
+    }
 
     main.appendChild(row.row);
 
