@@ -27,7 +27,7 @@ public class Task {
 
     @JsonIgnore
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
-    private List<TaskMessage> taskMessages;
+    private List<TaskMessage> taskMessages = new ArrayList<>();
 
     public void addMember(Member member) {
         members.add(member);
