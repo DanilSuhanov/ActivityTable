@@ -45,8 +45,6 @@ async function menuTaskLoad(colContent) {
                                 } else {
                                     sendMessage(task.id, messageForm.input.value);
 
-                                    console.log(member.taskRole);
-
                                     let messageElement = createMessage(messageForm.input.value, username, member.taskRole, true);
 
                                     messageList.appendChild(messageElement.main);
