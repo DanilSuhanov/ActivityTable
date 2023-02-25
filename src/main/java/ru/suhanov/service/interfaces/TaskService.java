@@ -12,4 +12,6 @@ public interface TaskService {
     Task findTaskById(long id);
     Member findMemberByUserAndTaskId(User user, long taskId);
     List<TaskMessage> findAllMessagesByTaskId(long id);
+    void update(Task task);
+    Task findTaskByTitle(String title);
 }

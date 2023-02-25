@@ -7,6 +7,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
+import ru.suhanov.model.enam.TaskRole;
 import ru.suhanov.model.request.ImpRequest;
 import ru.suhanov.model.task.Task;
 import ru.suhanov.model.User;
@@ -180,5 +181,21 @@ public class UserApiController {
     @GetMapping("/task/message/{id}/member")
     public ResponseEntity<Member> getMemberByMessageId(@PathVariable long id) {
         return new ResponseEntity<>(taskMessageService.findTaskMessageById(id).getMember(), HttpStatus.OK);
+    }
+
+    @PostMapping("/tasks/create")
+    public ResponseEntity<ExceptionInfo> createNewTask(@RequestBody Task task, Principal principal) {
+        taskService.addNewTask(task);
+
+        Member member = new Member();
+        member.setUser(userService.findUserByUsername(principal.getName()));
+        member.setTask(task);
+        member.setTaskRole(TaskRole.Руководитель);
+
+        memberService.addNewMember(member);
+
+        task.addMember(member);
+        taskService.update(task);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

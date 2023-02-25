@@ -36,10 +36,10 @@ async function switchMenu() {
     const activeValue = "list-group-item list-group-item-action active"
     const passiveValue = "list-group-item list-group-item-action";
 
-    menuProfile.onclick = function () {
+    menuProfile.onclick = async function () {
         update(attributeClass, passiveValue);
         menuProfile.setAttribute(attributeClass, activeValue);
-        profileLoad();
+        await profileLoad();
     }
 
     menuTasks.onclick = async function() {
@@ -48,14 +48,15 @@ async function switchMenu() {
         await menuTaskLoad(colContent);
     }
 
-    menuSubs.onclick = function () {
+    menuSubs.onclick = async function () {
         update(attributeClass, passiveValue);
         menuSubs.setAttribute(attributeClass, activeValue);
-
         colContent.innerHTML = "";
+
+        await createTaskMenu(colContent);
     }
 
-    menuHelp.onclick = function () {
+    menuHelp.onclick = async function () {
         update(attributeClass, passiveValue);
         menuHelp.setAttribute(attributeClass, activeValue);
 

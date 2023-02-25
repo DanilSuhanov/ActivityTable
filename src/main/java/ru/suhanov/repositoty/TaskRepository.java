@@ -7,4 +7,5 @@ import ru.suhanov.model.task.Task;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Task findTaskById(long id);
+    Task findTaskByTitle(String title);
 }

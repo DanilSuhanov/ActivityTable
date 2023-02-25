@@ -26,10 +26,13 @@ public class TaskServiceImp implements TaskService {
     @Override
     @Transactional
     public void addNewTask(Task task) {
-        taskRepository.save(task);
+        if (findTaskByTitle(task.getTitle()) == null) {
+            taskRepository.save(task);
+        }
     }
 
     @Override
+    @Transactional
     public Task findTaskById(long id) {
         return taskRepository.findTaskById(id);
     }
@@ -46,5 +49,17 @@ public class TaskServiceImp implements TaskService {
     @Transactional
     public List<TaskMessage> findAllMessagesByTaskId(long id) {
         return taskRepository.findTaskById(id).getTaskMessages();
+    }
+
+    @Override
+    @Transactional
+    public void update(Task task) {
+        taskRepository.save(task);
+    }
+
+    @Override
+    @Transactional
+    public Task findTaskByTitle(String title) {
+        return taskRepository.findTaskByTitle(title);
     }
 }

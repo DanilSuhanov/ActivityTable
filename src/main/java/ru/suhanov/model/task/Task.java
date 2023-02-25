@@ -1,5 +1,6 @@
 package ru.suhanov.model.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.suhanov.model.Member;
 
@@ -20,9 +21,11 @@ public class Task {
 
     private int completeness;
 
+    @JsonIgnore
     @OneToMany(mappedBy="task", fetch = FetchType.LAZY)
-    private List<Member> members;
+    private List<Member> members = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     private List<TaskMessage> taskMessages;
 
