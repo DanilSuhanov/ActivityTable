@@ -178,11 +178,6 @@ public class UserApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/task/message/{id}/member")
-    public ResponseEntity<Member> getMemberByMessageId(@PathVariable long id) {
-        return new ResponseEntity<>(taskMessageService.findTaskMessageById(id).getMember(), HttpStatus.OK);
-    }
-
     @PostMapping("/tasks/create")
     public ResponseEntity<ExceptionInfo> createNewTask(@RequestBody Task task, Principal principal) {
         taskService.addNewTask(task);

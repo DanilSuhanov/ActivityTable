@@ -20,7 +20,6 @@ public class TaskMessage {
     @JoinTable(name = "task_id")
     private Task task;
 
-    @JsonIgnore
     @ManyToOne
     @JoinTable(name = "member_id")
     private Member member;

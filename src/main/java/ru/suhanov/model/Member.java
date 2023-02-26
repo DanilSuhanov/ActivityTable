@@ -29,6 +29,7 @@ public class Member {
     @JoinColumn(name="task_id")
     private Task task;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<TaskMessage> taskMessages;
 }

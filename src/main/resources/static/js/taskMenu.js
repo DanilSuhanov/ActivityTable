@@ -6,7 +6,7 @@ async function menuTaskLoad(colContent) {
     colContent.innerHTML = `<ul class="list-group list-group-numbered" id="listContent"></ul>`;
     let listContent = document.querySelector("#listContent");
 
-    fetch('api/tasks')
+    await fetch('api/tasks')
         .then(res => res.json())
         .then(tasks => {
             tasks.forEach(task => {
@@ -62,21 +62,17 @@ function loadMessages(messageList, taskId) {
         .then(res => res.json())
         .then(meses => {
             for(let i = 0; i < meses.length; i++){
-                fetch('api/task/message/' + meses[i].id + '/member')
-                    .then(res => res.json())
-                    .then(member => {
-                        let mesElement = createMessage(meses[i].content, member.user.username, member.taskRole, false);
-                        mesElement.deleteButton.onclick = function () {
-                            fetch('api/task/deleteMessageById', {
-                                method: 'POST',
-                                headers: headerFetch,
-                                body: meses[i].id
-                            });
-                            messageList.removeChild(mesElement.main);
-                        };
-
-                        messageList.appendChild(mesElement.main);
+                let mesElement = createMessage(meses[i].content, meses[i].member.user.username, meses[i].member.taskRole, false);
+                mesElement.deleteButton.onclick = function () {
+                    fetch('api/task/deleteMessageById', {
+                        method: 'POST',
+                        headers: headerFetch,
+                        body: meses[i].id
                     });
+                    messageList.removeChild(mesElement.main);
+                };
+
+                messageList.appendChild(mesElement.main);
             }
         });
 }
