@@ -21,7 +21,6 @@ public class Task {
 
     private int completeness;
 
-    @JsonIgnore
     @OneToMany(mappedBy="task", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
 

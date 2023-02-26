@@ -79,7 +79,7 @@ public class UserApiController {
     public ResponseEntity<Member> getMemberByTask(Principal principal, @PathVariable long id) {
         return new ResponseEntity<>(taskService.findMemberByUserAndTaskId(userService
                 .findUserByUsername(principal.getName()), id), HttpStatus.OK);
-    }
+    } //TODO
 
     @PostMapping("/task/{id}/message")
     public ResponseEntity<ExceptionInfo> createNewTaskMessage(@PathVariable long id, Principal principal, @RequestBody String content) {

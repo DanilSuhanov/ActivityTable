@@ -3,58 +3,55 @@ async function menuTaskLoad(colContent) {
 
     let username = await (await fetch('api/username')).text();
 
-    colContent.innerHTML = `<ul class="list-group list-group-numbered" id="listContent"></ul>`;
+    colContent.innerHTML = `<ul class="list-group" id="listContent"></ul>`;
     let listContent = document.querySelector("#listContent");
 
-    await fetch('api/tasks')
-        .then(res => res.json())
-        .then(tasks => {
-            tasks.forEach(task => {
-                let taskElement = createTaskElement();
+    let tasks = await (await fetch('api/tasks')).json();
 
-                listContent.appendChild(taskElement.main);
-                taskElement.head.textContent = task.title;
-                taskElement.text.textContent = task.description;
+    for (let i = 0; i < tasks.length; i++) {
 
-                taskElement.head.onclick = function () {
+        let member = await (await fetch('api/task/' + tasks[i].id + '/member')).json();
 
-                    let card = createCard();
-                    let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
-                    let messageList = getList();
+        let taskElement = createTaskElement(member.taskRole);
 
-                    loadMessages(messageList, task.id);
+        listContent.appendChild(taskElement.main);
+        taskElement.head.textContent = tasks[i].title;
+        taskElement.text.textContent = tasks[i].description;
 
-                    colContent.innerHTML = "";
-                    colContent.appendChild(card.main);
+        taskElement.head.onclick = async function () {
 
-                    card.title.textContent = task.title;
-                    card.text.textContent = task.description;
+            let card = createCard();
+            let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
+            let messageList = getList();
 
-                    colContent.appendChild(messageList);
-                    colContent.appendChild(messageForm.main);
+            loadMessages(messageList, tasks[i].id);
 
-                    fetch('api/task/' + task.id + '/member')
-                        .then(res => res.json())
-                        .then(member => {
-                            card.header.textContent = 'Ваша роль в задаче - ' + member.taskRole;
+            colContent.innerHTML = "";
+            colContent.appendChild(card.main);
 
-                            messageForm.button.onclick = function () {
-                                if (messageForm.input.value === "") {
-                                    let notice = getNotice("danger", "Вы не ввели текст сообщения");
-                                    addNotice(notice, colContent);
-                                } else {
-                                    sendMessage(task.id, messageForm.input.value);
+            card.title.textContent = tasks[i].title;
+            card.text.textContent = tasks[i].description;
 
-                                    let messageElement = createMessage(messageForm.input.value, username, member.taskRole, true);
+            colContent.appendChild(messageList);
+            colContent.appendChild(messageForm.main);
 
-                                    messageList.appendChild(messageElement.main);
-                                    messageForm.input.value = "";
-                                }
-                            }
-                        });
+            card.header.textContent = 'Ваша роль в задаче - ' + member.taskRole;
+
+            messageForm.button.onclick = function () {
+                if (messageForm.input.value === "") {
+                    let notice = getNotice("danger", "Вы не ввели текст сообщения");
+                    addNotice(notice, colContent);
+                } else {
+                    sendMessage(tasks[i].id, messageForm.input.value);
+
+                    let messageElement = createMessage(messageForm.input.value, username, member.taskRole, true);
+
+                    messageList.appendChild(messageElement.main);
+                    messageForm.input.value = "";
                 }
-            })
-        });
+            }
+        }
+    }
 }
 
 function loadMessages(messageList, taskId) {
@@ -154,21 +151,41 @@ function createMessage(text, username, role, isNew) {
     };
 }
 
-function createTaskElement() {
-    let taskContent = document.createElement("li");
+function createTaskElement(role) {
+    let taskContent = getLi();
+
+    let row = getRow(10, 2);
+    taskContent.appendChild(row.row);
+
     let conteiner = document.createElement("div");
     conteiner.setAttribute("class", "ms-2 me-auto");
+    row.col1.appendChild(conteiner);
+
     let head = document.createElement("div");
     head.setAttribute("class", "fw-bold");
-    let p = document.createElement("div");
     conteiner.appendChild(head);
+
+    let p = document.createElement("div");
     conteiner.appendChild(p);
-    taskContent.setAttribute("class", "list-group-item d-flex justify-content-between align-items-start");
-    taskContent.appendChild(conteiner);
+
+    let exitTaskButton = document.createElement("button");
+    exitTaskButton.setAttribute("class", "btn btn-danger w-100");
+    row.col2.appendChild(exitTaskButton);
+
+    if (role === "Руководитель") {
+        exitTaskButton.textContent = "Удалить задачу";
+    } else {
+        exitTaskButton.textContent = "Покинуть задачу";
+    }
 
     return {
         main: taskContent,
         head: head,
-        text: p
+        text: p,
+        exit: exitTaskButton
     };
+}
+
+async function exitTask() {
+
 }
