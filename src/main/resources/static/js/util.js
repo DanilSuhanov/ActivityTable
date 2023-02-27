@@ -104,7 +104,10 @@ function getRow(size1, size2) {
 }
 
 function getRange(value) {
+    let list = getList();
+
     let li = getLi();
+    list.appendChild(li);
 
     let label = document.createElement("label");
     label.setAttribute("class", "form-label");
@@ -125,7 +128,7 @@ function getRange(value) {
     count = count + 1;
 
     return {
-        container: li,
+        container: list,
         label: label,
         input: input
     };
