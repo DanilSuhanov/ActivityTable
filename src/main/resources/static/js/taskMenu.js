@@ -27,6 +27,7 @@ async function menuTaskLoad(colContent) {
             let card = createCard();
             let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
             let messageList = getList();
+            let range = getRange(tasks[i].completeness);
 
             await loadMessages(messageList, tasks[i].id, username);
 
@@ -38,6 +39,8 @@ async function menuTaskLoad(colContent) {
 
             colContent.appendChild(messageList);
             colContent.appendChild(messageForm.main);
+
+            colContent.appendChild(range.container);
 
             card.header.textContent = 'Ваша роль в задаче - ' + member.taskRole;
 

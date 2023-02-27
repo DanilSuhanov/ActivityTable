@@ -102,3 +102,31 @@ function getRow(size1, size2) {
         col2: col2
     };
 }
+
+function getRange(value) {
+    let li = getLi();
+
+    let label = document.createElement("label");
+    label.setAttribute("class", "form-label");
+    label.setAttribute("for", "range" + count);
+    label.textContent = "Завершённость задачи";
+    li.appendChild(label);
+
+    let input = document.createElement("input");
+    input.setAttribute("class", "form-range");
+    input.setAttribute("type", "range");
+    input.setAttribute("min", "0");
+    input.setAttribute("max", "100");
+    input.setAttribute("step", "15");
+    input.setAttribute("id", "range" + count);
+    input.value = value;
+    li.appendChild(input);
+
+    count = count + 1;
+
+    return {
+        container: li,
+        label: label,
+        input: input
+    };
+}
