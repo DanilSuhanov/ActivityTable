@@ -31,9 +31,12 @@ async function profileLoad() {
     if (implementers.length !== 0) {
         cardImplement.textContent = "Исполнители: ";
 
-        implementers.forEach(imp => {
-            cardImplement.textContent += imp.username + " ";
-        });
+        for (let i = 0; i < implementers.length; i++) {
+            cardImplement.textContent += implementers[i].username;
+            if (i !== implementers.length - 1) {
+                cardImplement.textContent += ", ";
+            }
+        }
     } else {
         cardImplement.textContent = "У вас нет исполнителей";
     }
