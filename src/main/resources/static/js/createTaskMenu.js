@@ -14,6 +14,7 @@ async function createTaskMenu(colContent) {
     form.button.onclick = async function() {
         if (form.input.value !== ""
             && desc.value !== "") {
+
             let data = {
                 title: form.input.value,
                 description: desc.value,

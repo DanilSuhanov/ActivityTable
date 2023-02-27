@@ -29,4 +29,10 @@ public class MemberServiceImp implements MemberService {
     public Member findMemberById(long id) {
         return memberRepository.findMemberById(id);
     }
+
+    @Override
+    @Transactional
+    public void deleteMember(Member member) {
+        memberRepository.delete(member);
+    }
 }

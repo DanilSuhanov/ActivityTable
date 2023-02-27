@@ -18,13 +18,17 @@ async function menuTaskLoad(colContent) {
         taskElement.head.textContent = tasks[i].title;
         taskElement.text.textContent = tasks[i].description;
 
+        taskElement.addMember.button.onclick = async function() {
+            await addMember(tasks[i]);
+        };
+
         taskElement.head.onclick = async function () {
 
             let card = createCard();
             let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
             let messageList = getList();
 
-            loadMessages(messageList, tasks[i].id);
+            await loadMessages(messageList, tasks[i].id);
 
             colContent.innerHTML = "";
             colContent.appendChild(card.main);
@@ -54,28 +58,26 @@ async function menuTaskLoad(colContent) {
     }
 }
 
-function loadMessages(messageList, taskId) {
-    fetch('api/task/' + taskId + '/messages')
-        .then(res => res.json())
-        .then(meses => {
-            for(let i = 0; i < meses.length; i++){
-                let mesElement = createMessage(meses[i].content, meses[i].member.user.username, meses[i].member.taskRole, false);
-                mesElement.deleteButton.onclick = function () {
-                    fetch('api/task/deleteMessageById', {
-                        method: 'POST',
-                        headers: headerFetch,
-                        body: meses[i].id
-                    });
-                    messageList.removeChild(mesElement.main);
-                };
+async function loadMessages(messageList, taskId) {
+    let meses = await (await fetch('api/task/' + taskId + '/messages')).json()
 
-                messageList.appendChild(mesElement.main);
-            }
-        });
+    for(let i = 0; i < meses.length; i++){
+        let mesElement = createMessage(meses[i].content, meses[i].member.user.username, meses[i].member.taskRole, false);
+        mesElement.deleteButton.onclick = function () {
+            fetch('api/task/deleteMessageById', {
+                method: 'POST',
+                headers: headerFetch,
+                body: meses[i].id
+            });
+            messageList.removeChild(mesElement.main);
+        };
+
+        messageList.appendChild(mesElement.main);
+    }
 }
 
-function sendMessage(taskId, content) {
-    fetch('api/task/' + taskId + '/message', {
+async function sendMessage(taskId, content) {
+    await fetch('api/task/' + taskId + '/message', {
         method: 'POST',
         headers: headerFetch,
         body: content
@@ -154,7 +156,7 @@ function createMessage(text, username, role, isNew) {
 function createTaskElement(role) {
     let taskContent = getLi();
 
-    let row = getRow(10, 2);
+    let row = getRow(9, 3);
     taskContent.appendChild(row.row);
 
     let conteiner = document.createElement("div");
@@ -168,24 +170,104 @@ function createTaskElement(role) {
     let p = document.createElement("div");
     conteiner.appendChild(p);
 
+    let small2 = document.createElement("small");
     let exitTaskButton = document.createElement("button");
+    exitTaskButton.appendChild(small2);
     exitTaskButton.setAttribute("class", "btn btn-danger w-100");
     row.col2.appendChild(exitTaskButton);
 
+    let addButton = getAddMemberButton();
+
     if (role === "Руководитель") {
-        exitTaskButton.textContent = "Удалить задачу";
+        small2.textContent = "Удалить";
+
+        exitTaskButton.setAttribute("class", "btn btn-danger w-50");
+        row.col2.appendChild(addButton.button);
     } else {
-        exitTaskButton.textContent = "Покинуть задачу";
+        small2.textContent = "Покинуть";
     }
 
     return {
         main: taskContent,
         head: head,
         text: p,
-        exit: exitTaskButton
+        exit: exitTaskButton,
+        addMember: addButton
+    };
+}
+
+function getAddMemberButton() {
+    let small = document.createElement("small");
+    let addButton = document.createElement("button");
+    addButton.setAttribute("class", "btn btn-success w-50");
+    small.textContent = "Участники";
+    addButton.appendChild(small);
+
+    return {
+        button: addButton,
+        text: small
     };
 }
 
 async function exitTask() {
 
+}
+
+async function addMember(task) {
+    colContent.innerHTML = "";
+
+    let implementers = await (await fetch('api/user/implementers')).json();
+    let members = await (await fetch('api/task/' + task.id + '/members')).json();
+    let memberNames = members.map(item => item.user.username);
+
+    let checks = [];
+    let checkLi = getLi();
+    checkLi.setAttribute("class", "list-group-item list-group-item-light");
+    colContent.appendChild(checkLi);
+
+    for (let i = 0; i < implementers.length; i++) {
+        let checkBox = getCheckBox(implementers[i].username);
+        if (memberNames.includes(implementers[i].username)) {
+            checkBox.input.checked = true;
+        }
+        checks.push(checkBox);
+
+        checks.push();
+        checkLi.appendChild(checks[i].container);
+    }
+
+    console.log(memberNames)
+
+    let button = document.createElement("button");
+    button.setAttribute("class", "btn btn-success w-100");
+    button.textContent = "Сохранить";
+
+    button.onclick = async function() {
+        members = await (await fetch('api/task/' + task.id + '/members')).json();
+        memberNames = members.map(item => item.user.username);
+
+        for (let i = 0; i < checks.length; i ++) {
+            if (memberNames.includes(checks[i].label.textContent) && checks[i].input.checked === false) {
+                await fetch('api/task/' + task.id + '/deleteMember', {
+                    method: 'POST',
+                    headers: headerFetch,
+                    body: checks[i].label.textContent
+                });
+                console.log("Удалён " + checks[i].label.textContent);
+            } else if (!(memberNames.includes(checks[i].label.textContent)) && checks[i].input.checked === true) {
+                await fetch('api/task/' + task.id + '/addUser', {
+                    method: 'POST',
+                    headers: headerFetch,
+                    body: checks[i].label.textContent
+                });
+                console.log("Добавлен " + checks[i].label.textContent);
+            }
+        }
+
+
+        let notice = getNotice("success", "Изменения внесены!");
+        addNotice(notice, colContent);
+    };
+
+    colContent.appendChild(button);
 }

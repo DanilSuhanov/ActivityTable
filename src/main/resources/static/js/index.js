@@ -11,26 +11,6 @@ headerFetch = {
     'Referer': null
 }
 
-function getRow(size1, size2) {
-    let row = document.createElement("div");
-    row.setAttribute("class", "row");
-
-    let col1 = document.createElement("div");
-    col1.setAttribute("class", "col-" + size1);
-
-    let col2 = document.createElement("div");
-    col2.setAttribute("class", "col-" + size2);
-
-    row.appendChild(col1);
-    row.appendChild(col2);
-
-    return {
-        row: row,
-        col1: col1,
-        col2: col2
-    };
-}
-
 async function switchMenu() {
     const attributeClass = "class";
     const activeValue = "list-group-item list-group-item-action active"

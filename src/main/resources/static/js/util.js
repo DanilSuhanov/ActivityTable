@@ -58,3 +58,47 @@ function addNotice(notice, tag) {
         tag.removeChild(notice);
     };
 }
+
+function getCheckBox(content) {
+    let container = document.createElement("div");
+    container.setAttribute("class", "form-check form-switch");
+
+    let input = document.createElement("input");
+    input.setAttribute("class", "form-check-input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("role", "switch");
+    input.setAttribute("id", "switchFor" + content);
+    container.appendChild(input);
+
+    let label = document.createElement("label");
+    label.setAttribute("class", "form-check-label");
+    label.setAttribute("for", "switchFor" + content);
+    label.textContent = content;
+    container.appendChild(label);
+
+    return {
+        container: container,
+        input: input,
+        label: label
+    };
+}
+
+function getRow(size1, size2) {
+    let row = document.createElement("div");
+    row.setAttribute("class", "row");
+
+    let col1 = document.createElement("div");
+    col1.setAttribute("class", "col-" + size1);
+
+    let col2 = document.createElement("div");
+    col2.setAttribute("class", "col-" + size2);
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+
+    return {
+        row: row,
+        col1: col1,
+        col2: col2
+    };
+}

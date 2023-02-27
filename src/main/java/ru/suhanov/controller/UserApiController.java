@@ -96,9 +96,6 @@ public class UserApiController {
 
     @GetMapping("/task/{id}/messages")
     public ResponseEntity<List<TaskMessage>> getAllMessages(@PathVariable long id) {
-        taskService.findAllMessagesByTaskId(id)
-                .stream().sorted(Comparator.comparing(TaskMessage::getDate))
-                .collect(Collectors.toList()).forEach(t -> System.out.println(t.getContent()));
         return new ResponseEntity<>(taskService.findAllMessagesByTaskId(id)
                 .stream().sorted(Comparator.comparing(TaskMessage::getDate))
                 .collect(Collectors.toList()), HttpStatus.OK);
@@ -193,4 +190,42 @@ public class UserApiController {
         taskService.update(task);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/user/implementers")
+    public ResponseEntity<List<User>> getImplementers(Principal principal) {
+        return new ResponseEntity<>(userService.findUserByUsername(principal
+                .getName()).getImplementers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/task/{id}/members")
+    public ResponseEntity<List<Member>> getMembersInTask(@PathVariable long id) {
+        return new ResponseEntity<>(taskService.findTaskById(id).getMembers(), HttpStatus.OK);
+    }
+
+    @PostMapping("/task/{id}/addUser")
+    public ResponseEntity<ExceptionInfo> addUserToTask(@PathVariable long id, @RequestBody String username) {
+        Task task = taskService.findTaskById(id);
+        User user = userService.findUserByUsername(username);
+
+        Member member = new Member();
+        member.setTaskRole(TaskRole.Исполнитель);
+        member.setTask(task);
+        member.setUser(user);
+
+        memberService.addNewMember(member);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/task/{id}/deleteMember")
+    public ResponseEntity<ExceptionInfo> deleteMember(@PathVariable long id, @RequestBody String username) {
+        Task task = taskService.findTaskById(id);
+        Member member = userService.findUserByUsername(username).getMembers()
+                .stream().filter(m -> m.getTask().equals(task))
+                .findFirst().orElse(null);
+        memberService.deleteMember(member);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
