@@ -2,41 +2,26 @@ async function editProfileMenu() {
     colContent.innerHTML = "";
 
     let user = await (await fetch('api/user')).json();
+    let form = createSimpleForm("Пароль", "Изменить данные");
 
-    let form = createSimpleForm("Никнейм", "Изменить данные");
-    let button = form.button;
-
-    let passwordInput = document.createElement("input");
-    passwordInput.setAttribute("type", "password");
-    passwordInput.setAttribute("class", "form-control");
-    passwordInput.setAttribute("placeholder", "Пароль");
-
-    form.container.removeChild(button);
-
-    form.container.appendChild(passwordInput);
-    form.container.appendChild(button);
-
-    form.input.value = user.username;
-    passwordInput.value = user.password;
+    form.input.value = user.password;
 
     form.button.onclick = async function() {
-        let data = {
-            username: form.input.value,
-            password: passwordInput.value
-        };
-        await editProfile(data);
+        await editProfile(form.input.value);
 
         form.input.value = "";
-        passwordInput.value = "";
+
+        let notice = getNotice("success", "Пароль изменён!");
+        addNotice(notice, colContent);
     };
 
     colContent.appendChild(form.main);
 }
 
-async function editProfile(user) {
-    await fetch('api/user', {
+async function editProfile(password) {
+    await fetch('api/user/editPassword', {
         method: 'POST',
         headers: headerFetch,
-        body: JSON.stringify(user)
+        body: password
     });
 }

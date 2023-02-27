@@ -60,11 +60,10 @@ public class UserApiController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<ExceptionInfo> pageEdit(@RequestBody Map<String, String> userData, Principal principal) {
+    @PostMapping("/user/editPassword")
+    public ResponseEntity<ExceptionInfo> pageEdit(@RequestBody String password, Principal principal) {
         User user = userService.findUserByUsername(principal.getName());
-        user.setUsername(userData.get("username"));
-        user.setPassword(userData.get("password"));
+        user.setPassword(password);
 
         userService.editUser(user);
         return new ResponseEntity<>(HttpStatus.OK);

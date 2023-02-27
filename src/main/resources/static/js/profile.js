@@ -6,7 +6,7 @@ async function profileLoad() {
                                 <h5 class="card-title" id="cardUsername"></h5>
                                 <p class="card-text" id="cardSubordinates"></p>
                                 <p id="cardText" class="card-text">
-                                    <button id="editProfileButton" type="button" class="btn btn-primary">Изменить ифнормацию</button>
+                                    <button id="editProfileButton" type="button" class="btn btn-primary">Изменить пароль</button>
                                     <button id="implementButton" type="button" class="btn btn-primary">Исполнители</button>
                                     <button id="requestButton" type="button" class="btn btn-primary">Заявки на руководство</button>
                                 </p>
