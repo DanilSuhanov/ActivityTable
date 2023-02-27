@@ -28,7 +28,7 @@ async function menuTaskLoad(colContent) {
             let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
             let messageList = getList();
 
-            await loadMessages(messageList, tasks[i].id);
+            await loadMessages(messageList, tasks[i].id, username);
 
             colContent.innerHTML = "";
             colContent.appendChild(card.main);
@@ -48,7 +48,7 @@ async function menuTaskLoad(colContent) {
                 } else {
                     sendMessage(tasks[i].id, messageForm.input.value);
 
-                    let messageElement = createMessage(messageForm.input.value, username, member.taskRole, true);
+                    let messageElement = createMessage(messageForm.input.value, username, member.taskRole, false);
 
                     messageList.appendChild(messageElement.main);
                     messageForm.input.value = "";
@@ -58,11 +58,12 @@ async function menuTaskLoad(colContent) {
     }
 }
 
-async function loadMessages(messageList, taskId) {
+async function loadMessages(messageList, taskId, username) {
     let meses = await (await fetch('api/task/' + taskId + '/messages')).json()
 
     for(let i = 0; i < meses.length; i++){
-        let mesElement = createMessage(meses[i].content, meses[i].member.user.username, meses[i].member.taskRole, false);
+        let mesElement = createMessage(meses[i].content, meses[i].member.user.username,
+            meses[i].member.taskRole, meses[i].member.user.username === username);
         mesElement.deleteButton.onclick = function () {
             fetch('api/task/deleteMessageById', {
                 method: 'POST',
@@ -109,7 +110,7 @@ function createCard() {
     };
 }
 
-function createMessage(text, username, role, isNew) {
+function createMessage(text, username, role, deleteFunc) {
 
     let row = getRow(10, 2);
 
@@ -139,7 +140,7 @@ function createMessage(text, username, role, isNew) {
     butt.setAttribute("class", "btn btn-danger w-100");
     butt.textContent = 'Удалить';
 
-    if (!isNew) {
+    if (deleteFunc) {
         row.col2.appendChild(butt);
     }
 
@@ -246,8 +247,11 @@ async function addMember(task) {
         members = await (await fetch('api/task/' + task.id + '/members')).json();
         memberNames = members.map(item => item.user.username);
 
+        let changes = false;
+
         for (let i = 0; i < checks.length; i ++) {
             if (memberNames.includes(checks[i].label.textContent) && checks[i].input.checked === false) {
+                changes = true;
                 await fetch('api/task/' + task.id + '/deleteMember', {
                     method: 'POST',
                     headers: headerFetch,
@@ -255,6 +259,7 @@ async function addMember(task) {
                 });
                 console.log("Удалён " + checks[i].label.textContent);
             } else if (!(memberNames.includes(checks[i].label.textContent)) && checks[i].input.checked === true) {
+                changes = true;
                 await fetch('api/task/' + task.id + '/addUser', {
                     method: 'POST',
                     headers: headerFetch,
@@ -264,9 +269,13 @@ async function addMember(task) {
             }
         }
 
-
-        let notice = getNotice("success", "Изменения внесены!");
-        addNotice(notice, colContent);
+        if (changes) {
+            let notice = getNotice("success", "Изменения внесены!");
+            addNotice(notice, colContent);
+        } else {
+            let notice = getNotice("danger", "Изменений не произашло!");
+            addNotice(notice, colContent);
+        }
     };
 
     colContent.appendChild(button);
