@@ -99,13 +99,6 @@ public class PreInitService {
 
             memberService.addNewMember(member);
 
-            Member member2 = new Member();
-            member2.setUser(user);
-            member2.setTask(task2);
-            member2.setTaskRole(TaskRole.Исполнитель);
-
-            memberService.addNewMember(member2);
-
             userService.update(user);
         }
     }
