@@ -27,7 +27,11 @@ async function menuTaskLoad(colContent) {
             let card = createCard();
             let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
             let messageList = getList();
+
             let range = getRange(tasks[i].completeness);
+            let rangeButton = document.createElement("button");
+            rangeButton.setAttribute("class", "btn btn-success w-100");
+            rangeButton.textContent = "Подтвердить";
 
             await loadMessages(messageList, tasks[i].id, username);
 
@@ -43,6 +47,27 @@ async function menuTaskLoad(colContent) {
             colContent.appendChild(range.container);
 
             card.header.textContent = 'Ваша роль в задаче - ' + member.taskRole;
+
+            if (member.taskRole !== "Руководитель") {
+                range.container.appendChild(rangeButton);
+
+                range.input.onchange = async function() {
+                    range.label.textContent = "Завершённость задачи - " + range.input.value + "%";
+                };
+
+                rangeButton.onclick = async function () {
+                    await fetch('api/task/' + tasks[i].id + '/completeness', {
+                        method: 'POST',
+                        headers: headerFetch,
+                        body: range.input.value
+                    });
+
+                    let notice = getNotice("success", "Завершённость задачи записана!");
+                    addNotice(notice, colContent);
+                };
+            } else {
+                range.input.disabled = true;
+            }
 
             messageForm.button.onclick = function () {
                 if (messageForm.input.value === "") {

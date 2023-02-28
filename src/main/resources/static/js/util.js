@@ -112,7 +112,7 @@ function getRange(value) {
     let label = document.createElement("label");
     label.setAttribute("class", "form-label");
     label.setAttribute("for", "range" + count);
-    label.textContent = "Завершённость задачи";
+    label.textContent = "Завершённость задачи - " + value + "%";
     li.appendChild(label);
 
     let input = document.createElement("input");
@@ -120,7 +120,7 @@ function getRange(value) {
     input.setAttribute("type", "range");
     input.setAttribute("min", "0");
     input.setAttribute("max", "100");
-    input.setAttribute("step", "15");
+    input.setAttribute("step", "5");
     input.setAttribute("id", "range" + count);
     input.value = value;
     li.appendChild(input);

@@ -227,4 +227,13 @@ public class UserApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/task/{id}/completeness")
+    public ResponseEntity<ExceptionInfo> setCompleteness(@PathVariable long id, @RequestBody int completeness) {
+        Task task = taskService.findTaskById(id);
+        task.setCompleteness(completeness);
+
+        taskService.update(task);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
