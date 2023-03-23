@@ -3,10 +3,10 @@ package ru.suhanov.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
+import ru.suhanov.model.Role;
 import ru.suhanov.model.enam.TaskRole;
 import ru.suhanov.model.request.ImpRequest;
 import ru.suhanov.model.task.Task;
@@ -37,19 +37,48 @@ public class UserApiController {
         this.impRequestService = impRequestService;
     }
 
+    private HttpStatus checkSecurity(String username) {
+        User user = userService.findUserByUsername(username);
+        if (user == null)
+            return HttpStatus.UNAUTHORIZED;
+        if (user.getRoles().stream().map(Role::getAuthority).noneMatch(a -> a.equals("ROLE_ADMIN")))
+            return HttpStatus.NON_AUTHORITATIVE_INFORMATION;
+        return HttpStatus.OK;
+    }
+
+    private HttpStatus checkSecurity(User user) {
+        if (user == null)
+            return HttpStatus.UNAUTHORIZED;
+        if (user.getRoles().stream().map(Role::getAuthority).noneMatch(a -> a.equals("ROLE_ADMIN")))
+            return HttpStatus.NON_AUTHORITATIVE_INFORMATION;
+        return HttpStatus.OK;
+    }
+
     @GetMapping("/users")
-    public ResponseEntity<List<User>> list() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<User>> list(Principal principal) {
+        HttpStatus status = checkSecurity(principal.getName());
+        if (!status.equals(HttpStatus.OK)) {
+            return new ResponseEntity<>(status);
+        } else {
+            return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+        }
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<ExceptionInfo> pageDelete(@PathVariable("id") Long id) {
-        userService.deleteUserById(id);
-        return new ResponseEntity<>(new ExceptionInfo("User deleted"), HttpStatus.OK);
+    public ResponseEntity<ExceptionInfo> pageDelete(@PathVariable("id") Long id, Principal principal) {
+        User user = userService.findUserByUsername(principal.getName());
+        HttpStatus status = checkSecurity(user);
+
+        if (!status.equals(HttpStatus.OK) && !Objects.equals(user.getId(), id)) {
+            return new ResponseEntity<>(status);
+        } else {
+            userService.deleteUserById(id);
+            return new ResponseEntity<>(new ExceptionInfo("User deleted"), HttpStatus.OK);
+        }
     }
 
     @GetMapping("users/{id}")
-    public ResponseEntity<User> getUser (@PathVariable("id") Long id) {
+    public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
         User user = userService.findUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -235,5 +264,14 @@ public class UserApiController {
         taskService.update(task);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/user/getPassword")
+    public ResponseEntity<String> getUserPassword(Principal principal) {
+        User user = userService.findUserByUsername(principal.getName());
+        if (user == null)
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        else
+            return new ResponseEntity<>(user.getPassword(), HttpStatus.OK);
     }
 }

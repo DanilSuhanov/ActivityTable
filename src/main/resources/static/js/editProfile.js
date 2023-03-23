@@ -1,10 +1,10 @@
 async function editProfileMenu() {
     colContent.innerHTML = "";
 
-    let user = await (await fetch('api/user')).json();
+    let password = await (await fetch('api/user/getPassword')).text();
     let form = createSimpleForm("Пароль", "Изменить данные");
 
-    form.input.value = user.password;
+    form.input.value = password;
 
     form.button.onclick = async function() {
         await editProfile(form.input.value);
