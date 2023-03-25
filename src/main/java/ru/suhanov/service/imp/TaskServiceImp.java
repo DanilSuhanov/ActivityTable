@@ -1,6 +1,5 @@
 package ru.suhanov.service.imp;
 
-import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.suhanov.model.Member;
@@ -8,6 +7,7 @@ import ru.suhanov.model.task.Task;
 import ru.suhanov.model.User;
 import ru.suhanov.model.task.TaskMessage;
 import ru.suhanov.repositoty.TaskRepository;
+import ru.suhanov.service.interfaces.MemberService;
 import ru.suhanov.service.interfaces.TaskService;
 
 import javax.transaction.Transactional;
@@ -17,10 +17,12 @@ import java.util.List;
 public class TaskServiceImp implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final MemberService memberService;
 
     @Autowired
-    public TaskServiceImp(TaskRepository taskRepository) {
+    public TaskServiceImp(TaskRepository taskRepository, MemberService memberService) {
         this.taskRepository = taskRepository;
+        this.memberService = memberService;
     }
 
     @Override
@@ -47,6 +49,13 @@ public class TaskServiceImp implements TaskService {
 
     @Override
     @Transactional
+    public Member findMemberByUserAndTaskId(User user, Task task) {
+        return task.getMembers().stream().filter(member -> member.getUser().equals(user))
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    @Transactional
     public List<TaskMessage> findAllMessagesByTaskId(long id) {
         return taskRepository.findTaskById(id).getTaskMessages();
     }
@@ -61,5 +70,11 @@ public class TaskServiceImp implements TaskService {
     @Transactional
     public Task findTaskByTitle(String title) {
         return taskRepository.findTaskByTitle(title);
+    }
+
+    @Override
+    @Transactional
+    public void deleteTask(Task task) {
+        taskRepository.delete(task);
     }
 }

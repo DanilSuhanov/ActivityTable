@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private List<User> implementers = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Member> members = new ArrayList<>();
 
     @JsonIgnore
@@ -75,6 +75,10 @@ public class User implements UserDetails {
 
     public void addSubordinates(User user) {
         implementers.add(user);
+    }
+
+    public void removeMember(Member member) {
+        members.remove(member);
     }
 
     @Override

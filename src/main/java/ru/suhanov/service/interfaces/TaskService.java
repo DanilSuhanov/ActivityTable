@@ -11,7 +11,10 @@ public interface TaskService {
     void addNewTask(Task task);
     Task findTaskById(long id);
     Member findMemberByUserAndTaskId(User user, long taskId);
+    Member findMemberByUserAndTaskId(User user, Task task);
     List<TaskMessage> findAllMessagesByTaskId(long id);
     void update(Task task);
     Task findTaskByTitle(String title);
+
+    void deleteTask(Task task);
 }

@@ -22,6 +22,10 @@ async function menuTaskLoad(colContent) {
             await addMember(tasks[i]);
         };
 
+        taskElement.exit.onclick = async function() {
+            await exit(tasks[i].id, taskElement, listContent);
+        }
+
         taskElement.head.onclick = async function () {
 
             let card = createCard();
@@ -84,6 +88,11 @@ async function menuTaskLoad(colContent) {
             }
         }
     }
+}
+
+async function exit(taskId, taskElement, listContent) {
+    await fetch('api/tasks/' + taskId + '/exit');
+    listContent.removeChild(taskElement.main);
 }
 
 async function loadMessages(messageList, taskId, username) {

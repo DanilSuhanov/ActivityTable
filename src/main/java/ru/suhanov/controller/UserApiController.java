@@ -274,4 +274,19 @@ public class UserApiController {
         else
             return new ResponseEntity<>(user.getPassword(), HttpStatus.OK);
     }
+
+    @GetMapping("/tasks/{id}/exit")
+    public ResponseEntity<ExceptionInfo> taskExit(Principal principal, @PathVariable Long id) {
+        User user = userService.findUserByUsername(principal.getName());
+        Task task = taskService.findTaskById(id);
+        Member member = taskService.findMemberByUserAndTaskId(user, task);
+
+        if (member.getTaskRole().equals(TaskRole.Исполнитель)) {
+            memberService.deleteMember(member);
+        } else {
+            taskService.deleteTask(task);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

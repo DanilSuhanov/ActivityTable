@@ -21,11 +21,11 @@ public class Task {
 
     private int completeness;
 
-    @OneToMany(mappedBy="task", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Member> members = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TaskMessage> taskMessages = new ArrayList<>();
 
     public void addMember(Member member) {
