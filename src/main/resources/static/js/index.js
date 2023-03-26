@@ -2,6 +2,7 @@ let colContent = document.querySelector("#colContent");
 
 let menuProfile = document.querySelector("#switchProfile");
 let menuTasks = document.querySelector("#switchTasks");
+let menuTasksGone = document.querySelector("#switchTasksGone");
 let menuSubs = document.querySelector("#switchSubs");
 let menuHelp = document.querySelector("#switchHelp");
 
@@ -25,7 +26,13 @@ async function switchMenu() {
     menuTasks.onclick = async function() {
         update(attributeClass, passiveValue);
         menuTasks.setAttribute(attributeClass, activeValue);
-        await menuTaskLoad(colContent);
+        await menuTaskLoad(colContent, false);
+    }
+
+    menuTasksGone.onclick = async function() {
+        update(attributeClass, passiveValue);
+        menuTasksGone.setAttribute(attributeClass, activeValue);
+        await menuTaskLoad(colContent, true);
     }
 
     menuSubs.onclick = async function () {
@@ -47,6 +54,7 @@ async function switchMenu() {
 function update (attributeClass, passiveValue) {
     menuProfile.setAttribute(attributeClass, passiveValue);
     menuTasks.setAttribute(attributeClass, passiveValue);
+    menuTasksGone.setAttribute(attributeClass, passiveValue);
     menuSubs.setAttribute(attributeClass, passiveValue);
     menuHelp.setAttribute(attributeClass, passiveValue);
 }

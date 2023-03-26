@@ -1,12 +1,12 @@
 let count = 0;
-async function menuTaskLoad(colContent) {
+async function menuTaskLoad(colContent, verificated) {
 
     let username = await (await fetch('api/username')).text();
 
     colContent.innerHTML = `<ul class="list-group" id="listContent"></ul>`;
     let listContent = document.querySelector("#listContent");
 
-    let tasks = await (await fetch('api/tasks')).json();
+    let tasks = (await (await fetch('api/tasks')).json()).filter((task) => task.verification === verificated);
 
     for (let i = 0; i < tasks.length; i++) {
 
@@ -21,7 +21,6 @@ async function menuTaskLoad(colContent) {
         taskElement.head.onclick = async function () {
 
             let card = createCard();
-            let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
             let messageList = getList();
 
             let range = getRange(tasks[i].completeness);
@@ -38,7 +37,25 @@ async function menuTaskLoad(colContent) {
             card.text.textContent = tasks[i].description;
 
             colContent.appendChild(messageList);
-            colContent.appendChild(messageForm.main);
+
+            if (!tasks[i].verification) {
+                let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
+                colContent.appendChild(messageForm.main);
+
+                messageForm.button.onclick = function () {
+                    if (messageForm.input.value === "") {
+                        let notice = getNotice("danger", "Вы не ввели текст сообщения");
+                        addNotice(notice, colContent);
+                    } else {
+                        sendMessage(tasks[i].id, messageForm.input.value);
+
+                        let messageElement = createMessage(messageForm.input.value, username, member.taskRole, false);
+
+                        messageList.appendChild(messageElement.main);
+                        messageForm.input.value = "";
+                    }
+                }
+            }
 
             colContent.appendChild(range.container);
 
@@ -66,20 +83,6 @@ async function menuTaskLoad(colContent) {
 
                 if (tasks[i].completeness === 100 && !tasks[i].verification) {
                     colContent.appendChild(getVerificationButton(tasks[i]));
-                }
-            }
-
-            messageForm.button.onclick = function () {
-                if (messageForm.input.value === "") {
-                    let notice = getNotice("danger", "Вы не ввели текст сообщения");
-                    addNotice(notice, colContent);
-                } else {
-                    sendMessage(tasks[i].id, messageForm.input.value);
-
-                    let messageElement = createMessage(messageForm.input.value, username, member.taskRole, false);
-
-                    messageList.appendChild(messageElement.main);
-                    messageForm.input.value = "";
                 }
             }
         }
@@ -212,38 +215,47 @@ function createTaskElement(role, task, listContent) {
     let p = document.createElement("div");
     conteiner.appendChild(p);
 
-    let small2 = document.createElement("small");
-    let exitTaskButton = document.createElement("button");
-    exitTaskButton.appendChild(small2);
-    exitTaskButton.setAttribute("class", "btn btn-danger w-100");
-    row.col2.appendChild(exitTaskButton);
+    if (!task.verification) {
 
-    let addButton = getAddMemberButton();
+        let small2 = document.createElement("small");
+        let exitTaskButton = document.createElement("button");
+        exitTaskButton.appendChild(small2);
+        exitTaskButton.setAttribute("class", "btn btn-danger w-100");
+        row.col2.appendChild(exitTaskButton);
 
-    if (role === "Руководитель") {
-        small2.textContent = "Удалить";
+        let addButton = getAddMemberButton();
 
-        exitTaskButton.setAttribute("class", "btn btn-danger w-50");
-        row.col2.appendChild(addButton.button);
+        if (role === "Руководитель") {
+            small2.textContent = "Удалить";
+
+            exitTaskButton.setAttribute("class", "btn btn-danger w-50");
+            row.col2.appendChild(addButton.button);
+        } else {
+            small2.textContent = "Покинуть";
+        }
+
+        addButton.button.onclick = async function () {
+            await addMember(task);
+        };
+
+        exitTaskButton.onclick = async function () {
+            await exit(task.id, taskContent, listContent);
+        }
+
+        return {
+            main: taskContent,
+            head: head,
+            text: p,
+            exit: exitTaskButton,
+            addMember: addButton
+        };
     } else {
-        small2.textContent = "Покинуть";
+        return {
+            main: taskContent,
+            head: head,
+            text: p
+        };
     }
-
-    addButton.button.onclick = async function() {
-        await addMember(task);
-    };
-
-    exitTaskButton.onclick = async function() {
-        await exit(task.id, taskContent, listContent);
-    }
-
-    return {
-        main: taskContent,
-        head: head,
-        text: p,
-        exit: exitTaskButton,
-        addMember: addButton
-    };
 }
 
 function getAddMemberButton() {
