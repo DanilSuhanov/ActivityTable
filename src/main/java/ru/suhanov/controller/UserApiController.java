@@ -289,4 +289,18 @@ public class UserApiController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/tasks/{id}/verification")
+    public ResponseEntity<ExceptionInfo> verificationTask(@PathVariable Long id, Principal principal) {
+        Task task = taskService.findTaskById(id);
+        User user = userService.findUserByUsername(principal.getName());
+        Member member = taskService.findMemberByUserAndTaskId(user, task);
+
+        if (member.getTaskRole().equals(TaskRole.Руководитель)) {
+            task.setVerification(true);
+            taskService.update(task);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

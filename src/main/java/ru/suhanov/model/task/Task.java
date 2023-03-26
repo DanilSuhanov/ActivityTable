@@ -21,6 +21,8 @@ public class Task {
 
     private int completeness;
 
+    private boolean verification;
+
     @OneToMany(mappedBy="task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Member> members = new ArrayList<>();
 

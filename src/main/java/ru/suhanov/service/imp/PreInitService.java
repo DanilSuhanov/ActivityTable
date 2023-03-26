@@ -81,16 +81,9 @@ public class PreInitService {
             Task task = new Task();
             task.setTitle("Task1");
             task.setDescription("Description1");
-            task.setCompleteness(getRandom());
+            task.setCompleteness(100);
 
             taskService.addNewTask(task);
-
-            Task task2 = new Task();
-            task2.setTitle("Task2");
-            task2.setDescription("Description2");
-            task2.setCompleteness(getRandom());
-
-            taskService.addNewTask(task2);
 
             Member member = new Member();
             member.setUser(user);

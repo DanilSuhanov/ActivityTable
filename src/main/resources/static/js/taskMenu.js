@@ -12,19 +12,11 @@ async function menuTaskLoad(colContent) {
 
         let member = await (await fetch('api/task/' + tasks[i].id + '/member')).json();
 
-        let taskElement = createTaskElement(member.taskRole);
+        let taskElement = createTaskElement(member.taskRole, tasks[i], listContent);
 
         listContent.appendChild(taskElement.main);
         taskElement.head.textContent = tasks[i].title;
         taskElement.text.textContent = tasks[i].description;
-
-        taskElement.addMember.button.onclick = async function() {
-            await addMember(tasks[i]);
-        };
-
-        taskElement.exit.onclick = async function() {
-            await exit(tasks[i].id, taskElement, listContent);
-        }
 
         taskElement.head.onclick = async function () {
 
@@ -71,6 +63,10 @@ async function menuTaskLoad(colContent) {
                 };
             } else {
                 range.input.disabled = true;
+
+                if (tasks[i].completeness === 100 && !tasks[i].verification) {
+                    colContent.appendChild(getVerificationButton(tasks[i]));
+                }
             }
 
             messageForm.button.onclick = function () {
@@ -92,7 +88,7 @@ async function menuTaskLoad(colContent) {
 
 async function exit(taskId, taskElement, listContent) {
     await fetch('api/tasks/' + taskId + '/exit');
-    listContent.removeChild(taskElement.main);
+    listContent.removeChild(taskElement);
 }
 
 async function loadMessages(messageList, taskId, username) {
@@ -191,8 +187,16 @@ function createMessage(text, username, role, deleteFunc) {
     };
 }
 
-function createTaskElement(role) {
+function createTaskElement(role, task, listContent) {
     let taskContent = getLi();
+
+    if (task.completeness === 100) {
+        if (task.verification) {
+            taskContent.setAttribute("class", "list-group-item list-group-item-success");
+        } else {
+            taskContent.setAttribute("class", "list-group-item list-group-item-warning");
+        }
+    }
 
     let row = getRow(9, 3);
     taskContent.appendChild(row.row);
@@ -225,6 +229,14 @@ function createTaskElement(role) {
         small2.textContent = "Покинуть";
     }
 
+    addButton.button.onclick = async function() {
+        await addMember(task);
+    };
+
+    exitTaskButton.onclick = async function() {
+        await exit(task.id, taskContent, listContent);
+    }
+
     return {
         main: taskContent,
         head: head,
@@ -245,10 +257,6 @@ function getAddMemberButton() {
         button: addButton,
         text: small
     };
-}
-
-async function exitTask() {
-
 }
 
 async function addMember(task) {
@@ -316,4 +324,21 @@ async function addMember(task) {
     };
 
     colContent.appendChild(button);
+}
+
+function getVerificationButton(task) {
+    let button = document.createElement("div");
+    button.setAttribute("class", "btn btn-success w-100");
+    button.textContent = "Подтвердить выполнение задачи";
+
+    button.onclick = async function() {
+        await fetch('api/tasks/' + task.id + '/verification');
+
+        let notice = getNotice('success', 'Выполнение задачи подтверждено!');
+        addNotice(notice, colContent);
+
+        colContent.removeChild(button);
+    }
+
+    return button;
 }
