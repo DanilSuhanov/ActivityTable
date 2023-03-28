@@ -33,4 +33,8 @@ public class Task {
     public void addMember(Member member) {
         members.add(member);
     }
+
+    public void removeMember(Member member) {
+        members.remove(member);
+    }
 }

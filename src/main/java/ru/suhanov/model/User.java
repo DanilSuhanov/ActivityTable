@@ -81,6 +81,10 @@ public class User implements UserDetails {
         members.remove(member);
     }
 
+    public void removeImp(User user) {
+        implementers.remove(user);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;

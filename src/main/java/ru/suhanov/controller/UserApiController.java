@@ -155,9 +155,20 @@ public class UserApiController {
     @PostMapping("/user/implement/delete")
     public ResponseEntity<ExceptionInfo> deleteImplement(@RequestBody long id, Principal principal) {
         User user = userService.findUserByUsername(principal.getName());
-        List<User> implementers = user.getImplementers().stream()
-                .filter(u -> !u.getId().equals(id)).collect(Collectors.toList());
-        user.setImplementers(implementers);
+        User imp = user.getImplementers().stream()
+                .filter(u -> u.getId().equals(id)).findFirst().orElse(null);
+
+        List<Task> tasks = user.getMembers().stream()
+                .filter(m -> m.getTaskRole().equals(TaskRole.Руководитель))
+                .map(Member::getTask).collect(Collectors.toList());
+
+        List<Member> members = imp.getMembers().stream().filter(m -> tasks.contains(m.getTask()))
+                .collect(Collectors.toList());
+        for (Member member : members) {
+            memberService.deleteMember(member);
+        }
+
+        user.removeImp(imp);
         userService.editUser(user);
 
         return new ResponseEntity<>(HttpStatus.OK);

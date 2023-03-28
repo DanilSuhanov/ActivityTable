@@ -30,6 +30,6 @@ public class Member {
     private Task task;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TaskMessage> taskMessages;
 }
