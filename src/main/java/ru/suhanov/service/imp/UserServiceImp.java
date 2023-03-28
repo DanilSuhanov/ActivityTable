@@ -78,6 +78,12 @@ public class UserServiceImp implements UserService {
             userRepository.save(user);
     }
 
+    @Override
+    @Transactional
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     private boolean exist(Long id) {
         return userRepository.findById(id).isPresent();
     }

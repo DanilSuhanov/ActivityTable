@@ -303,4 +303,14 @@ public class UserApiController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/user/getAllManagers")
+    public ResponseEntity<List<User>> getAllManagers(Principal principal) {
+        User user = userService.findUserByUsername(principal.getName());
+        List<User> users = userService.getAllUsers();
+        List<User> owners = users.stream().filter((u) -> u.getImplementers()
+                .contains(user)).collect(Collectors.toList());
+
+        return new ResponseEntity<>(owners, HttpStatus.OK);
+    }
 }

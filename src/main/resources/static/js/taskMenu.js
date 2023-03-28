@@ -6,10 +6,16 @@ async function menuTaskLoad(colContent, verificated) {
     colContent.innerHTML = `<ul class="list-group" id="listContent"></ul>`;
     let listContent = document.querySelector("#listContent");
 
-    let tasks = (await (await fetch('api/tasks')).json()).filter((task) => task.verification === verificated);
+    let tasks = (await (await fetch('api/tasks')).json())
+        .filter((task) => task.verification === verificated);
+
+    if (tasks.length === 0) {
+        let mesAboutNull = document.createElement("p");
+        mesAboutNull.textContent = "Задачи отсутствуют"
+        colContent.appendChild(mesAboutNull);
+    }
 
     for (let i = 0; i < tasks.length; i++) {
-
         let member = await (await fetch('api/task/' + tasks[i].id + '/member')).json();
 
         let taskElement = createTaskElement(member.taskRole, tasks[i], listContent);

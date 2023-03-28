@@ -5,6 +5,7 @@ async function profileLoad() {
                             <div class="card-body">
                                 <h5 class="card-title" id="cardUsername"></h5>
                                 <p class="card-text" id="cardSubordinates"></p>
+                                <p class="card-text" id="cardManagers"></p>
                                 <p id="cardText" class="card-text">
                                     <button id="editProfileButton" type="button" class="btn btn-primary">Изменить пароль</button>
                                     <button id="implementButton" type="button" class="btn btn-primary">Исполнители</button>
@@ -21,6 +22,7 @@ async function profileLoad() {
 
     let cardUsername = document.querySelector("#cardUsername");
     let cardImplement = document.querySelector("#cardSubordinates");
+    let cardManagers = document.querySelector("#cardManagers");
 
     let user = await (await fetch(`api/user`)).json();
 
@@ -28,18 +30,11 @@ async function profileLoad() {
 
     let implementers = await (await fetch('api/user/getAllImp')).json();
 
-    if (implementers.length !== 0) {
-        cardImplement.textContent = "Исполнители: ";
+    await printCollection(implementers, cardImplement, "Исполнители");
 
-        for (let i = 0; i < implementers.length; i++) {
-            cardImplement.textContent += implementers[i].username;
-            if (i !== implementers.length - 1) {
-                cardImplement.textContent += ", ";
-            }
-        }
-    } else {
-        cardImplement.textContent = "У вас нет исполнителей";
-    }
+    let managers = await (await fetch('api/user/getAllManagers')).json();
+
+    await printCollection(managers, cardManagers, "Руководители");
 
     implemetButton.onclick = async function() {
         await implementMenu(implementers);
@@ -52,6 +47,21 @@ async function profileLoad() {
     editProfileButton.onclick = async function() {
         await editProfileMenu();
     };
+}
+
+async function printCollection(colection, tag, title) {
+    if (colection.length !== 0) {
+        tag.textContent = title + ": ";
+
+        for (let i = 0; i < colection.length; i++) {
+            tag.textContent += colection[i].username;
+            if (i !== colection.length - 1) {
+                tag.textContent += ", ";
+            }
+        }
+    } else {
+        tag.textContent = "У вас нет - " + title;
+    }
 }
 
 async function requestMenu() {
