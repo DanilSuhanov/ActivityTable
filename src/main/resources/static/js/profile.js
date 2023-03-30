@@ -65,7 +65,7 @@ async function printCollection(colection, tag, title) {
 }
 
 async function requestMenu() {
-    await addInvitesToList(setListOnColumn());
+    await addInvitesToList(setListOnColContent());
 }
 
 async function addInvitesToList(list) {
@@ -128,7 +128,7 @@ async function rejectInvites(id) {
 
 
 async function implementMenu(implementers) {
-    await addImplementersToList(setListOnColumn(), implementers);
+    await addImplementersToList(setListOnColContent(), implementers);
 }
 
 async function addImplementersToList(list, implementers) {

@@ -36,7 +36,7 @@ function getLi() {
     return li;
 }
 
-function setListOnColumn() {
+function setListOnColContent() {
     colContent.innerHTML = "";
     let list = getList();
     colContent.appendChild(list);
