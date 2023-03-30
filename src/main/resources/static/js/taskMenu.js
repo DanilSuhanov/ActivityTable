@@ -22,11 +22,8 @@ async function getUsernameCurrentUser() {
 }
 
 async function menuTaskLoad(colContent, verificated) {
-
     let listContent = setListOnColContent();
-
     let tasks = await getTasks(verificated);
-
     checkTasksOnEmpty(tasks, colContent);
 
     for (let i = 0; i < tasks.length; i++) {
@@ -44,7 +41,7 @@ async function loadMessages(messageList, taskId, username) {
     let meses = await (await fetch('api/task/' + taskId + '/messages')).json()
 
     for(let i = 0; i < meses.length; i++){
-        let mesElement = createMessage(meses[i], meses[i].member.user.username === username, messageList);
+        let mesElement = await createMessage(meses[i], meses[i].member.user.username === username, messageList);
         messageList.appendChild(mesElement.main);
     }
 }
@@ -82,10 +79,27 @@ function createCard() {
     };
 }
 
-function createMessage(mes, deleteFunc, list) {
+async function deleteButton(deleteFunc, row, mes, list, main) {
+    if (deleteFunc) {
+        let butt = document.createElement("button");
+        butt.setAttribute("class", "btn btn-danger w-100");
+        butt.textContent = 'Удалить';
 
+        row.col2.appendChild(butt);
+
+        butt.onclick = async function () {
+            await fetch('api/task/deleteMessageById', {
+                method: 'POST',
+                headers: headerFetch,
+                body: mes.id
+            });
+            list.removeChild(main);
+        };
+    }
+}
+
+async function createMessage(mes, deleteFunc, list) {
     let row = getRow(10, 2);
-
     let main = document.createElement("li");
 
     if (mes.member.taskRole === "Руководитель") {
@@ -108,30 +122,14 @@ function createMessage(mes, deleteFunc, list) {
     row.col1.appendChild(author);
     row.col1.appendChild(message);
 
-    let butt = document.createElement("button");
-    butt.setAttribute("class", "btn btn-danger w-100");
-    butt.textContent = 'Удалить';
-
-    if (deleteFunc) {
-        row.col2.appendChild(butt);
-
-        butt.onclick = async function () {
-            await fetch('api/task/deleteMessageById', {
-                method: 'POST',
-                headers: headerFetch,
-                body: mes.id
-            });
-            list.removeChild(main);
-        };
-    }
+    await deleteButton(deleteFunc, row, mes, list, main);
 
     count = count + 1;
 
     return {
         main: main,
         message: message,
-        author: author,
-        deleteButton: butt
+        author: author
     };
 }
 
@@ -173,25 +171,20 @@ async function getTaskView(task) {
     };
 }
 
-async function createTaskElement(task, listContent) {
-    let taskView = await getTaskView(task);
+async function getAcceptButton() {
+    let rangeButton = document.createElement("button");
+    rangeButton.setAttribute("class", "btn btn-success w-100");
+    rangeButton.textContent = "Подтвердить";
+    return rangeButton;
+}
 
-    //be
-    let member = await getCurrentMember(task);
-    let username = await getUsernameCurrentUser();
-
-    taskView.head.textContent = task.title;
-    taskView.text.textContent = task.description;
-
+async function openTaskLogic(taskView, task, username, member) {
     taskView.head.onclick = async function () {
 
         let card = createCard();
         let messageList = getList();
-
         let range = getRange(task.completeness);
-        let rangeButton = document.createElement("button");
-        rangeButton.setAttribute("class", "btn btn-success w-100");
-        rangeButton.textContent = "Подтвердить";
+        let rangeButton = await getAcceptButton();
 
         await loadMessages(messageList, task.id, username);
 
@@ -213,7 +206,7 @@ async function createTaskElement(task, listContent) {
                     addNotice(notice, colContent);
                 } else {
                     let mes = await sendMessage(task.id, messageForm.input.value);
-                    let messageElement = createMessage(mes, true, messageList);
+                    let messageElement = await createMessage(mes, true, messageList);
 
                     messageList.appendChild(messageElement.main);
                     messageForm.input.value = "";
@@ -228,7 +221,7 @@ async function createTaskElement(task, listContent) {
         if (member.taskRole !== "Руководитель") {
             range.container.appendChild(rangeButton);
 
-            range.input.onchange = async function() {
+            range.input.onchange = async function () {
                 range.label.textContent = "Завершённость задачи - " + range.input.value + "%";
             };
 
@@ -250,7 +243,17 @@ async function createTaskElement(task, listContent) {
             }
         }
     }
-    //end
+}
+
+async function createTaskElement(task, listContent) {
+    let taskView = await getTaskView(task);
+    let member = await getCurrentMember(task);
+    let username = await getUsernameCurrentUser();
+
+    taskView.head.textContent = task.title;
+    taskView.text.textContent = task.description;
+
+    await openTaskLogic(taskView, task, username, member);
 
     if (!task.verification) {
 

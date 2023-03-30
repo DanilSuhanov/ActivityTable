@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.suhanov.Util;
+import ru.suhanov.model.bot.TelegramUser;
 import ru.suhanov.model.request.ImpRequest;
 
 import javax.persistence.*;
@@ -47,6 +48,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<ImpRequest> requests = new ArrayList<>();
 
+    @OneToOne
+    private TelegramUser telegramUser;
 
     @Override
     public String toString() {
