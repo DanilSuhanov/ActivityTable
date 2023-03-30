@@ -110,7 +110,7 @@ public class UserApiController {
     }
 
     @PostMapping("/task/{id}/message")
-    public ResponseEntity<ExceptionInfo> createNewTaskMessage(@PathVariable long id, Principal principal, @RequestBody String content) {
+    public ResponseEntity<TaskMessage> createNewTaskMessage(@PathVariable long id, Principal principal, @RequestBody String content) {
         TaskMessage taskMessage = new TaskMessage();
         taskMessage.setTask(taskService.findTaskById(id));
         taskMessage.setDate(new Date());
@@ -119,7 +119,7 @@ public class UserApiController {
         taskMessage.setContent(content);
         taskMessageService.addNewTaskMessage(taskMessage);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(taskMessage, HttpStatus.OK);
     }
 
     @GetMapping("/task/{id}/messages")

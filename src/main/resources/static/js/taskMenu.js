@@ -48,14 +48,13 @@ async function menuTaskLoad(colContent, verificated) {
                 let messageForm = createSimpleForm("Ввод заметок по задаче", "Отправить заметку");
                 colContent.appendChild(messageForm.main);
 
-                messageForm.button.onclick = function () {
+                messageForm.button.onclick = async function () {
                     if (messageForm.input.value === "") {
                         let notice = getNotice("danger", "Вы не ввели текст сообщения");
                         addNotice(notice, colContent);
                     } else {
-                        sendMessage(tasks[i].id, messageForm.input.value);
-
-                        let messageElement = createMessage(messageForm.input.value, username, member.taskRole, false);
+                        let mes = await sendMessage(tasks[i].id, messageForm.input.value);
+                        let messageElement = createMessage(mes, true, messageList);
 
                         messageList.appendChild(messageElement.main);
                         messageForm.input.value = "";
@@ -104,27 +103,17 @@ async function loadMessages(messageList, taskId, username) {
     let meses = await (await fetch('api/task/' + taskId + '/messages')).json()
 
     for(let i = 0; i < meses.length; i++){
-        let mesElement = createMessage(meses[i].content, meses[i].member.user.username,
-            meses[i].member.taskRole, meses[i].member.user.username === username);
-        mesElement.deleteButton.onclick = function () {
-            fetch('api/task/deleteMessageById', {
-                method: 'POST',
-                headers: headerFetch,
-                body: meses[i].id
-            });
-            messageList.removeChild(mesElement.main);
-        };
-
+        let mesElement = createMessage(meses[i], meses[i].member.user.username === username, messageList);
         messageList.appendChild(mesElement.main);
     }
 }
 
 async function sendMessage(taskId, content) {
-    await fetch('api/task/' + taskId + '/message', {
+    return await (await fetch('api/task/' + taskId + '/message', {
         method: 'POST',
         headers: headerFetch,
         body: content
-    });
+    })).json();
 }
 
 function createCard() {
@@ -152,13 +141,15 @@ function createCard() {
     };
 }
 
-function createMessage(text, username, role, deleteFunc) {
+function createMessage(mes, deleteFunc, list) {
 
     let row = getRow(10, 2);
 
     let main = document.createElement("li");
 
-    if (role === "Руководитель") {
+    console.log(mes)
+
+    if (mes.member.taskRole === "Руководитель") {
         main.setAttribute("class", "list-group-item list-group-item-primary");
     } else {
         main.setAttribute("class", "list-group-item");
@@ -168,12 +159,12 @@ function createMessage(text, username, role, deleteFunc) {
 
     let message = document.createElement("div");
     message.setAttribute("id", "mes" + count.toString());
-    message.textContent = text;
+    message.textContent = mes.content;
 
     let author = document.createElement("label");
     author.setAttribute("class", "form-label");
     author.setAttribute("for", "mes" + count.toString());
-    author.textContent = username;
+    author.textContent = mes.member.user.username;
 
     row.col1.appendChild(author);
     row.col1.appendChild(message);
@@ -184,6 +175,15 @@ function createMessage(text, username, role, deleteFunc) {
 
     if (deleteFunc) {
         row.col2.appendChild(butt);
+
+        butt.onclick = async function () {
+            await fetch('api/task/deleteMessageById', {
+                method: 'POST',
+                headers: headerFetch,
+                body: mes.id
+            });
+            list.removeChild(main);
+        };
     }
 
     count = count + 1;

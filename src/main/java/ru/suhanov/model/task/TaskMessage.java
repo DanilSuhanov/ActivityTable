@@ -12,7 +12,7 @@ import java.util.Date;
 public class TaskMessage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @JsonIgnore
