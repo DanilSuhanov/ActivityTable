@@ -1,5 +1,6 @@
 package ru.suhanov.model.bot;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.suhanov.model.User;
 
@@ -20,9 +21,11 @@ public class TelegramUser {
     private String firstName;
     private String lastName;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
+    @JsonIgnore
     @OneToOne
     private User user;
 }
