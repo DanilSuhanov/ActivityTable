@@ -6,6 +6,7 @@ async function profileLoad() {
                                 <h5 class="card-title" id="cardUsername"></h5>
                                 <p class="card-text" id="cardSubordinates"></p>
                                 <p class="card-text" id="cardManagers"></p>
+                                <p class="card-text" id="cardTelegram"></p>
                                 <p id="cardText" class="card-text">
                                     <button id="editProfileButton" type="button" class="btn btn-primary">Изменить пароль</button>
                                     <button id="implementButton" type="button" class="btn btn-primary">Исполнители</button>
@@ -23,6 +24,7 @@ async function profileLoad() {
     let cardUsername = document.querySelector("#cardUsername");
     let cardImplement = document.querySelector("#cardSubordinates");
     let cardManagers = document.querySelector("#cardManagers");
+    let cardTelegram = document.querySelector("#cardTelegram");
 
     let user = await (await fetch(`api/user`)).json();
 
@@ -35,6 +37,12 @@ async function profileLoad() {
     let managers = await (await fetch('api/user/getAllManagers')).json();
 
     await printCollection(managers, cardManagers, "Руководители");
+
+    if (user.telegramUser != null) {
+        cardTelegram.textContent = "Телеграм - " + user.telegramUser.username;
+    } else {
+        cardTelegram.textContent = "Телеграм не привязан";
+    }
 
     implemetButton.onclick = async function() {
         await implementMenu(implementers);

@@ -5,6 +5,7 @@ let menuTasks = document.querySelector("#switchTasks");
 let menuTasksGone = document.querySelector("#switchTasksGone");
 let menuSubs = document.querySelector("#switchSubs");
 let menuHelp = document.querySelector("#switchHelp");
+let telegramMenu = document.querySelector("#telegramMenu");
 
 headerFetch = {
     'Accept': 'application/json',
@@ -49,14 +50,21 @@ async function switchMenu() {
 
         colContent.innerHTML = "";
     }
+
+    telegramMenu.onclick = async function() {
+        update(attributeClass, passiveValue);
+        telegramMenu.setAttribute(attributeClass, activeValue);
+        await loadTelegramMenu();
+    }
 }
 
-function update (attributeClass, passiveValue) {
-    menuProfile.setAttribute(attributeClass, passiveValue);
-    menuTasks.setAttribute(attributeClass, passiveValue);
-    menuTasksGone.setAttribute(attributeClass, passiveValue);
-    menuSubs.setAttribute(attributeClass, passiveValue);
-    menuHelp.setAttribute(attributeClass, passiveValue);
+function update (attributeClass, value) {
+    menuProfile.setAttribute(attributeClass, value);
+    menuTasks.setAttribute(attributeClass, value);
+    menuTasksGone.setAttribute(attributeClass, value);
+    menuSubs.setAttribute(attributeClass, value);
+    menuHelp.setAttribute(attributeClass, value);
+    telegramMenu.setAttribute(attributeClass, value);
 }
 
 switchMenu();

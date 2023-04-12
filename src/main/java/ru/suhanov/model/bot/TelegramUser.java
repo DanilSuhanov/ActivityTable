@@ -26,6 +26,12 @@ public class TelegramUser {
     private List<Notification> notifications = new ArrayList<>();
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(mappedBy = "telegramUser", cascade = CascadeType.ALL)
     private User user;
+
+    public void fill(TelegramUser telegramUser) {
+        chatId = telegramUser.getChatId();
+        firstName = telegramUser.getFirstName();
+        lastName = telegramUser.getLastName();
+    }
 }

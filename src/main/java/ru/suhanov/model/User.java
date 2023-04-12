@@ -48,7 +48,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<ImpRequest> requests = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "telegram_user_id")
     private TelegramUser telegramUser;
 
     @Override

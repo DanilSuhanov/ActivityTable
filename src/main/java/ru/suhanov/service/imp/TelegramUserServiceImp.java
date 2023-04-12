@@ -7,10 +7,12 @@ import ru.suhanov.repositoty.TelegramUserRepository;
 import ru.suhanov.service.interfaces.TelegramUserService;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TelegramUserServiceImp implements TelegramUserService {
-    private TelegramUserRepository telegramUserRepository;
+    private final TelegramUserRepository telegramUserRepository;
 
     @Autowired
     public TelegramUserServiceImp(TelegramUserRepository telegramUserRepository) {
@@ -21,5 +23,20 @@ public class TelegramUserServiceImp implements TelegramUserService {
     @Transactional
     public void add(TelegramUser telegramUser) {
         telegramUserRepository.save(telegramUser);
+    }
+
+    @Override
+    @Transactional
+    public void verification(TelegramUser telegramUser) {
+        TelegramUser telegramUserOnDb = telegramUserRepository.findByUsername(telegramUser.getUsername());
+        telegramUserOnDb.fill(telegramUser);
+        telegramUserRepository.save(telegramUserOnDb);
+    }
+
+    @Override
+    @Transactional
+    public List<TelegramUser> getUnverificatedUser() {
+        return telegramUserRepository.findAll().stream().filter(telegramUser -> telegramUser.getChatId() == null)
+                .collect(Collectors.toList());
     }
 }

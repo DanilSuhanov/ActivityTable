@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
 import ru.suhanov.model.Role;
+import ru.suhanov.model.bot.Notification;
+import ru.suhanov.model.bot.TelegramUser;
 import ru.suhanov.model.enam.TaskRole;
 import ru.suhanov.model.request.ImpRequest;
 import ru.suhanov.model.task.Task;
@@ -27,14 +29,16 @@ public class UserApiController {
     private final MemberService memberService;
     private final TaskMessageService taskMessageService;
     private final ImpRequestService impRequestService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public UserApiController(UserService userService, TaskService taskService, MemberService memberService, TaskMessageService taskMessageService, ImpRequestService impRequestService) {
+    public UserApiController(UserService userService, TaskService taskService, MemberService memberService, TaskMessageService taskMessageService, ImpRequestService impRequestService, NotificationService notificationService) {
         this.userService = userService;
         this.taskService = taskService;
         this.memberService = memberService;
         this.taskMessageService = taskMessageService;
         this.impRequestService = impRequestService;
+        this.notificationService = notificationService;
     }
 
     private HttpStatus checkSecurity(String username) {
@@ -52,6 +56,16 @@ public class UserApiController {
         if (user.getRoles().stream().map(Role::getAuthority).noneMatch(a -> a.equals("ROLE_ADMIN")))
             return HttpStatus.NON_AUTHORITATIVE_INFORMATION;
         return HttpStatus.OK;
+    }
+
+    private void notification(String content, User user) {
+        if (user.getTelegramUser() != null) {
+            Notification notification = new Notification();
+            notification.setContent(content);
+            notification.setTo(user.getTelegramUser());
+
+            notificationService.add(notification);
+        }
     }
 
     @GetMapping("/users")
@@ -77,12 +91,6 @@ public class UserApiController {
         }
     }
 
-    @GetMapping("users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
-        User user = userService.findUserById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
     @GetMapping("/user")
     public ResponseEntity<User> getUserByUsername (Principal principal) {
         User user = userService.findUserByUsername(principal.getName());
@@ -95,6 +103,7 @@ public class UserApiController {
         user.setPassword(password);
 
         userService.editUser(user);
+        notification("Пароль успешно изменён!", user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -111,13 +120,18 @@ public class UserApiController {
 
     @PostMapping("/task/{id}/message")
     public ResponseEntity<TaskMessage> createNewTaskMessage(@PathVariable long id, Principal principal, @RequestBody String content) {
+        Task task = taskService.findTaskById(id);
+        User user = userService.findUserByUsername(principal.getName());
+
         TaskMessage taskMessage = new TaskMessage();
-        taskMessage.setTask(taskService.findTaskById(id));
+        taskMessage.setTask(task);
         taskMessage.setDate(new Date());
-        taskMessage.setMember(taskService.findMemberByUserAndTaskId(userService
-                .findUserByUsername(principal.getName()), id));
+        taskMessage.setMember(taskService.findMemberByUserAndTaskId(user, id));
         taskMessage.setContent(content);
         taskMessageService.addNewTaskMessage(taskMessage);
+
+        task.getMembers().stream().map(Member::getUser).filter(u -> !u.equals(user))
+                .forEach(u -> notification("Новая заметка в задаче " + task.getTitle(), u));
 
         return new ResponseEntity<>(taskMessage, HttpStatus.OK);
     }
@@ -187,6 +201,8 @@ public class UserApiController {
 
             impRequestService.addNewImpRequest(impRequest);
 
+            notification("Вам пришло приглашение стать исполнителем", imp);
+
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
@@ -199,6 +215,9 @@ public class UserApiController {
     @PostMapping("/user/invite/reject")
     public ResponseEntity<ExceptionInfo> rejectInvite(@RequestBody long inviteId) {
         impRequestService.deleteImpRequestById(inviteId);
+
+        ImpRequest impRequest = impRequestService.findRequestById(inviteId);
+        notification("Предложение отклонено - " + impRequest.getImp().getUsername(), impRequest.getSender());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -211,6 +230,8 @@ public class UserApiController {
 
         impRequestService.deleteImpRequestById(impRequest.getId());
         userService.update(sender);
+
+        notification("Приглашение принято - " + imp.getUsername(), sender);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -253,16 +274,22 @@ public class UserApiController {
 
         memberService.addNewMember(member);
 
+        notification("Вы были добавлены в задачу - " + task.getTitle()
+                + "\nОписание - " + task.getDescription(), user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/task/{id}/deleteMember")
     public ResponseEntity<ExceptionInfo> deleteMember(@PathVariable long id, @RequestBody String username) {
         Task task = taskService.findTaskById(id);
-        Member member = userService.findUserByUsername(username).getMembers()
+        User user = userService.findUserByUsername(username);
+        Member member = user.getMembers()
                 .stream().filter(m -> m.getTask().equals(task))
                 .findFirst().orElse(null);
         memberService.deleteMember(member);
+
+        notification("Вы были удалены из задачи - " + task.getTitle()
+                + "\nОписание - " + task.getDescription(), user);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -274,6 +301,9 @@ public class UserApiController {
 
         taskService.update(task);
 
+        task.getMembers().stream().filter(m -> m.getTaskRole() == TaskRole.Руководитель).map(Member::getUser)
+                .forEach(user -> notification("Завершённость задачи " + task.getTitle()
+                        + " изменена на " + task.getCompleteness(), user));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -312,6 +342,8 @@ public class UserApiController {
             taskService.update(task);
         }
 
+        task.getMembers().stream().filter(m -> m.getTaskRole() == TaskRole.Исполнитель).map(Member::getUser)
+                .forEach(u -> notification("Задача " + task.getTitle() + " была принята", u));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

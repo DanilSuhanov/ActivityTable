@@ -42,6 +42,7 @@ public class UserServiceImp implements UserService {
             oldUser.setRoles(user.getRoles());
             oldUser.setPassword(user.getPassword());
             oldUser.setUsername(user.getUsername());
+            oldUser.setTelegramUser(user.getTelegramUser());
             userRepository.save(oldUser);
         }
     }

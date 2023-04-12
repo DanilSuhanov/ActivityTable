@@ -1,3 +1,15 @@
+async function importantNotice(text, to) {
+    let data = {
+        content: text,
+        to: to
+    }
+
+    await fetch('api/telegram/addNotification', {
+        method: 'POST',
+        headers: headerFetch,
+        body: JSON.stringify(data)
+    });
+}
 function getList() {
     let list = document.createElement("ul");
     list.setAttribute("class", "list-group");

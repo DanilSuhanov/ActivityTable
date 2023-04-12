@@ -54,17 +54,42 @@ async function sendMessage(taskId, content) {
     })).json();
 }
 
-function createCard() {
+async function getCard() {
     let card = document.createElement("div");
     card.setAttribute("class", "card");
+    return card;
+}
+
+async function getCardHeader() {
     let cardHeader = document.createElement("div");
     cardHeader.setAttribute("class", "card-header");
+    return cardHeader;
+}
+
+async function getCardBody() {
     let cardBody = document.createElement("div");
     cardBody.setAttribute("class", "card-body");
+    return cardBody;
+}
+
+async function getCardTitle() {
     let cardTitle = document.createElement("h5");
     cardTitle.setAttribute("class", "card-title");
+    return cardTitle;
+}
+
+async function getCardText() {
     let cardText = document.createElement("p");
     cardText.setAttribute("class", "card-text");
+    return cardText;
+}
+
+async function createCard() {
+    let card = await getCard();
+    let cardHeader = await getCardHeader();
+    let cardBody = await getCardBody();
+    let cardTitle = await getCardTitle();
+    let cardText = await getCardText();
 
     card.appendChild(cardHeader);
     card.appendChild(cardBody);
@@ -181,7 +206,7 @@ async function getAcceptButton() {
 async function openTaskLogic(taskView, task, username, member) {
     taskView.head.onclick = async function () {
 
-        let card = createCard();
+        let card = await createCard();
         let messageList = getList();
         let range = getRange(task.completeness);
         let rangeButton = await getAcceptButton();
