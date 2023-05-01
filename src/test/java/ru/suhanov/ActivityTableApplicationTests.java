@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ActivityTableApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void expiredTest() {
+
 	}
 
 }

@@ -11,6 +11,7 @@ import ru.suhanov.service.interfaces.UserService;
 import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class MemberServiceImp implements MemberService {
 
     private final MemberRepository memberRepository;
@@ -23,19 +24,16 @@ public class MemberServiceImp implements MemberService {
     }
 
     @Override
-    @Transactional
     public void addNewMember(Member member) {
         memberRepository.save(member);
     }
 
     @Override
-    @Transactional
     public Member findMemberById(long id) {
         return memberRepository.findMemberById(id);
     }
 
     @Override
-    @Transactional
     public void deleteMember(Member member) {
         User user = member.getUser();
         user.removeMember(member);

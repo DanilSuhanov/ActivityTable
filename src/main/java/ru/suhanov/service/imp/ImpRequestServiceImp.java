@@ -9,6 +9,7 @@ import ru.suhanov.service.interfaces.ImpRequestService;
 import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class ImpRequestServiceImp implements ImpRequestService {
 
     private final ImpRequestRepository impRequestRepository;
@@ -19,13 +20,11 @@ public class ImpRequestServiceImp implements ImpRequestService {
     }
 
     @Override
-    @Transactional
     public void addNewImpRequest(ImpRequest impRequest) {
         impRequestRepository.save(impRequest);
     }
 
     @Override
-    @Transactional
     public void deleteImpRequestById(long id) {
         ImpRequest impRequest = impRequestRepository.findImpRequestById(id);
         if (impRequest != null) {
@@ -34,7 +33,6 @@ public class ImpRequestServiceImp implements ImpRequestService {
     }
 
     @Override
-    @Transactional
     public ImpRequest findRequestById(long id) {
         return impRequestRepository.findImpRequestById(id);
     }

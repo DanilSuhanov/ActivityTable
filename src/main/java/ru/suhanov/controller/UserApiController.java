@@ -17,6 +17,9 @@ import ru.suhanov.model.task.TaskMessage;
 import ru.suhanov.service.interfaces.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -236,7 +239,16 @@ public class UserApiController {
     }
 
     @PostMapping("/tasks/create")
-    public ResponseEntity<ExceptionInfo> createNewTask(@RequestBody Task task, Principal principal) {
+    public ResponseEntity<ExceptionInfo> createNewTask(@RequestBody Map<String, Object> payload, Principal principal) {
+        String title = (String) payload.get("title");
+        String description = (String) payload.get("description");
+        int completeness = (int) payload.get("completeness");
+
+        LocalDate localDate = LocalDate.parse((String) payload.get("deadline"));
+        LocalDateTime deadline = localDate.atStartOfDay();
+
+        Task task = new Task(title, description, completeness, deadline);
+
         taskService.addNewTask(task);
 
         Member member = new Member();
@@ -250,6 +262,7 @@ public class UserApiController {
         taskService.update(task);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     @GetMapping("/user/implementers")
     public ResponseEntity<List<User>> getImplementers(Principal principal) {

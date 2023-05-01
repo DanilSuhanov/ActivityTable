@@ -9,6 +9,7 @@ import ru.suhanov.service.interfaces.TaskMessageService;
 import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class TaskMessageServiceImp implements TaskMessageService {
 
     private final TaskMessageRepository taskMessageRepository;
@@ -19,19 +20,16 @@ public class TaskMessageServiceImp implements TaskMessageService {
     }
 
     @Override
-    @Transactional
     public void addNewTaskMessage(TaskMessage taskMessage) {
         taskMessageRepository.save(taskMessage);
     }
 
     @Override
-    @Transactional
     public TaskMessage findTaskMessageById(long id) {
         return taskMessageRepository.findTaskMessageById(id);
     }
 
     @Override
-    @Transactional
     public void deleteTaskMessageById(long id) {
         taskMessageRepository.delete(findTaskMessageById(id));
     }

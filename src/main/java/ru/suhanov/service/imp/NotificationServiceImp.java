@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class NotificationServiceImp implements NotificationService {
     private final NotificationRepository notificationRepository;
     @Autowired
@@ -18,13 +19,11 @@ public class NotificationServiceImp implements NotificationService {
     }
 
     @Override
-    @Transactional
     public void add(Notification notification) {
         notificationRepository.save(notification);
     }
 
     @Override
-    @Transactional
     public List<Notification> pollNotificationList() {
         List<Notification> notifications = notificationRepository.findAll();
         if (notifications.size() > 0) {

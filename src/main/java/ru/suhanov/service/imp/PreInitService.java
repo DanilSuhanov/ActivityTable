@@ -8,12 +8,13 @@ import ru.suhanov.model.enam.TaskRole;
 import ru.suhanov.model.task.Task;
 import ru.suhanov.service.interfaces.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Service
+
 public class PreInitService {
 
     private final PasswordEncoder passwordEncoder;
@@ -22,7 +23,6 @@ public class PreInitService {
     private final TaskService taskService;
     private final MemberService memberService;
 
-    @Autowired
     public PreInitService(PasswordEncoder passwordEncoder, RoleService roleService, UserService userService, TaskService taskService, MemberService memberService) {
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;

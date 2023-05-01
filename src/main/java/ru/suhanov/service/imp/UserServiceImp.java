@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
@@ -23,7 +24,6 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional
     public void addNewUser(User user) {
         if (userRepository.findUserByUsername(user.getUsername()) == null) {
             userRepository.save(user);
@@ -35,7 +35,6 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional
     public void editUser(User user) {
         User oldUser = userRepository.findById(user.getId()).orElse(null);
         if (oldUser != null) {
@@ -48,39 +47,33 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional
     public User findUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
     @Override
-    @Transactional
     public User findUserByUsername(String username) {
         return userRepository.findUserByUsername(username);
     }
 
     @Override
-    @Transactional
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
     @Override
-    @Transactional
     public void deleteUserById(Long id) {
         if (exist(id))
             userRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public void update(User user) {
         if (exist(user.getId()))
             userRepository.save(user);
     }
 
     @Override
-    @Transactional
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

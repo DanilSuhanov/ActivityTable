@@ -17,4 +17,6 @@ public interface TaskService {
     Task findTaskByTitle(String title);
 
     void deleteTask(Task task);
+
+    void checkAllTasksOnExpired();
 }

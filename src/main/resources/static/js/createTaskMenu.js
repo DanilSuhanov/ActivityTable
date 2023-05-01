@@ -7,8 +7,14 @@ async function createTaskMenu(colContent) {
     desc.setAttribute("class", "form-control");
     desc.setAttribute("placeholder", "Описание задачи");
 
+    let deadline = document.createElement("input");
+    deadline.setAttribute("type", "date");
+    deadline.setAttribute("class", "form-control");
+    deadline.setAttribute("placeholder", "Дата дедлайна");
+
     form.container.removeChild(form.button);
     form.container.appendChild(desc);
+    form.container.appendChild(deadline);
     form.container.appendChild(button);
 
     form.button.onclick = async function() {
@@ -18,7 +24,8 @@ async function createTaskMenu(colContent) {
             let data = {
                 title: form.input.value,
                 description: desc.value,
-                completeness: 0
+                completeness: 0,
+                deadline: deadline.value
             };
             await fetch('api/tasks/create', {
                 method: 'POST',

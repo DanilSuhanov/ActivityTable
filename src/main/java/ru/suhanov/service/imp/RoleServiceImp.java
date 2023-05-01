@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class RoleServiceImp implements RoleService {
 
     private final RoleRepository roleRepository;
@@ -20,7 +21,6 @@ public class RoleServiceImp implements RoleService {
     }
 
     @Override
-    @Transactional
     public void addNewRole(Role role) {
         if (roleRepository.findByAuthority(role.getAuthority()) == null) {
             roleRepository.save(role);
@@ -28,7 +28,6 @@ public class RoleServiceImp implements RoleService {
     }
 
     @Override
-    @Transactional
     public Role findRoleById(Long id) {
         return roleRepository.findById(id).orElse(null);
     }
@@ -39,13 +38,11 @@ public class RoleServiceImp implements RoleService {
     }
 
     @Override
-    @Transactional
     public List<Role> findAll() {
         return roleRepository.findAll();
     }
 
     @Override
-    @Transactional
     public void deleteById(Long id) {
         roleRepository.deleteById(id);
     }
