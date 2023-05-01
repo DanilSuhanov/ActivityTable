@@ -18,5 +18,5 @@ public interface TaskService {
 
     void deleteTask(Task task);
 
-    void checkAllTasksOnExpired();
+    void checkAllTasks();
 }

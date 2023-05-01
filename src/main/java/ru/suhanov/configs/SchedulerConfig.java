@@ -17,8 +17,8 @@ public class SchedulerConfig {
         this.taskService = taskService;
     }
 
-    @Scheduled(initialDelay = 0, fixedDelay = 3600000)
+    @Scheduled(cron = "0 0 9 * * ?")
     public void scheduleTask() {
-        taskService.checkAllTasksOnExpired();
+        taskService.checkAllTasks();
     }
 }

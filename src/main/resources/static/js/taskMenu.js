@@ -158,22 +158,24 @@ async function createMessage(mes, deleteFunc, list) {
     };
 }
 
-async function setColorByCompleteness(task, taskContent) {
+async function setColorByState(task, taskContent) {
     if (task.completeness === 100) {
         if (task.verification) {
             taskContent.setAttribute("class", "list-group-item list-group-item-success");
         } else {
             taskContent.setAttribute("class", "list-group-item list-group-item-warning");
         }
+    } else if (task.expired) {
+        taskContent.setAttribute("class", "list-group-item list-group-item-danger");
     }
+    return taskContent;
 }
 
 async function getTaskView(task) {
     let taskLi = getLi();
+    taskLi = await setColorByState(task, taskLi);
 
-    await setColorByCompleteness(task, taskLi);
-
-    let row = getRow(9, 3);
+    let row = getRowCol3(6, 3, 3);
     taskLi.appendChild(row.row);
 
     let container = document.createElement("div");
@@ -270,10 +272,29 @@ async function openTaskLogic(taskView, task, username, member) {
     }
 }
 
+async function addDeadlineDate(taskView, task) {
+    let container = document.createElement("div");
+
+    let text = document.createElement("div");
+    let bold = document.createElement("b");
+    text.appendChild(bold);
+    bold.textContent = "Дата дедлайна:";
+
+    let deadlineDate = document.createElement("div");
+    deadlineDate.textContent = task.deadlineInStringFormat;
+
+    container.appendChild(text);
+    container.appendChild(deadlineDate);
+
+    taskView.row.col2.appendChild(container);
+}
+
 async function createTaskElement(task, listContent) {
     let taskView = await getTaskView(task);
     let member = await getCurrentMember(task);
     let username = await getUsernameCurrentUser();
+
+    await addDeadlineDate(taskView, task);
 
     taskView.head.textContent = task.title;
     taskView.text.textContent = task.description;
@@ -282,11 +303,13 @@ async function createTaskElement(task, listContent) {
 
     if (!task.verification) {
 
+
+
         let small2 = document.createElement("small");
         let exitTaskButton = document.createElement("button");
         exitTaskButton.appendChild(small2);
         exitTaskButton.setAttribute("class", "btn btn-danger w-100");
-        taskView.row.col2.appendChild(exitTaskButton);
+        taskView.row.col3.appendChild(exitTaskButton);
 
         let addButton = getAddMemberButton();
 
@@ -294,7 +317,7 @@ async function createTaskElement(task, listContent) {
             small2.textContent = "Удалить";
 
             exitTaskButton.setAttribute("class", "btn btn-danger w-50");
-            taskView.row.col2.appendChild(addButton.button);
+            taskView.row.col3.appendChild(addButton.button);
         } else {
             small2.textContent = "Покинуть";
         }
@@ -304,7 +327,7 @@ async function createTaskElement(task, listContent) {
         };
 
         exitTaskButton.onclick = async function () {
-            await exit(task.id, taskContent, listContent);
+            await exit(task.id, taskView.li, listContent);
         }
     }
 

@@ -115,6 +115,31 @@ function getRow(size1, size2) {
     };
 }
 
+function getRowCol3(size1, size2, size3) {
+    let row = document.createElement("div");
+    row.setAttribute("class", "row");
+
+    let col1 = document.createElement("div");
+    col1.setAttribute("class", "col-" + size1);
+
+    let col2 = document.createElement("div");
+    col2.setAttribute("class", "col-" + size2);
+
+    let col3 = document.createElement("div");
+    col3.setAttribute("class", "col-" + size3);
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+    row.appendChild(col3);
+
+    return {
+        row: row,
+        col1: col1,
+        col2: col2,
+        col3: col3
+    };
+}
+
 function getRange(value) {
     let list = getList();
 

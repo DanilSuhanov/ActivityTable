@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.suhanov.Util;
 import ru.suhanov.exception.ExceptionInfo;
 import ru.suhanov.model.Member;
 import ru.suhanov.model.Role;
@@ -61,16 +62,6 @@ public class UserApiController {
         return HttpStatus.OK;
     }
 
-    private void notification(String content, User user) {
-        if (user.getTelegramUser() != null) {
-            Notification notification = new Notification();
-            notification.setContent(content);
-            notification.setTo(user.getTelegramUser());
-
-            notificationService.add(notification);
-        }
-    }
-
     @GetMapping("/users")
     public ResponseEntity<List<User>> list(Principal principal) {
         HttpStatus status = checkSecurity(principal.getName());
@@ -106,7 +97,7 @@ public class UserApiController {
         user.setPassword(password);
 
         userService.editUser(user);
-        notification("Пароль успешно изменён!", user);
+        notificationService.notification("Пароль успешно изменён!", user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -134,7 +125,7 @@ public class UserApiController {
         taskMessageService.addNewTaskMessage(taskMessage);
 
         task.getMembers().stream().map(Member::getUser).filter(u -> !u.equals(user))
-                .forEach(u -> notification("Новая заметка в задаче " + task.getTitle(), u));
+                .forEach(u -> notificationService.notification("Новая заметка в задаче " + task.getTitle(), u));
 
         return new ResponseEntity<>(taskMessage, HttpStatus.OK);
     }
@@ -204,7 +195,7 @@ public class UserApiController {
 
             impRequestService.addNewImpRequest(impRequest);
 
-            notification("Вам пришло приглашение стать исполнителем", imp);
+            notificationService.notification("Вам пришло приглашение стать исполнителем", imp);
 
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -220,7 +211,7 @@ public class UserApiController {
         impRequestService.deleteImpRequestById(inviteId);
 
         ImpRequest impRequest = impRequestService.findRequestById(inviteId);
-        notification("Предложение отклонено - " + impRequest.getImp().getUsername(), impRequest.getSender());
+        notificationService.notification("Предложение отклонено - " + impRequest.getImp().getUsername(), impRequest.getSender());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -234,7 +225,7 @@ public class UserApiController {
         impRequestService.deleteImpRequestById(impRequest.getId());
         userService.update(sender);
 
-        notification("Приглашение принято - " + imp.getUsername(), sender);
+        notificationService.notification("Приглашение принято - " + imp.getUsername(), sender);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -287,7 +278,7 @@ public class UserApiController {
 
         memberService.addNewMember(member);
 
-        notification("Вы были добавлены в задачу - " + task.getTitle()
+        notificationService.notification("Вы были добавлены в задачу - " + task.getTitle()
                 + "\nОписание - " + task.getDescription(), user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -301,7 +292,7 @@ public class UserApiController {
                 .findFirst().orElse(null);
         memberService.deleteMember(member);
 
-        notification("Вы были удалены из задачи - " + task.getTitle()
+        notificationService.notification("Вы были удалены из задачи - " + task.getTitle()
                 + "\nОписание - " + task.getDescription(), user);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -315,7 +306,7 @@ public class UserApiController {
         taskService.update(task);
 
         task.getMembers().stream().filter(m -> m.getTaskRole() == TaskRole.Руководитель).map(Member::getUser)
-                .forEach(user -> notification("Завершённость задачи " + task.getTitle()
+                .forEach(user -> notificationService.notification("Завершённость задачи " + task.getTitle()
                         + " изменена на " + task.getCompleteness(), user));
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -356,7 +347,7 @@ public class UserApiController {
         }
 
         task.getMembers().stream().filter(m -> m.getTaskRole() == TaskRole.Исполнитель).map(Member::getUser)
-                .forEach(u -> notification("Задача " + task.getTitle() + " была принята", u));
+                .forEach(u -> notificationService.notification("Задача " + task.getTitle() + " была принята", u));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

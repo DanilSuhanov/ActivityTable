@@ -14,9 +14,7 @@ public class Util {
     }
 
     public static String dateToString(LocalDateTime localDateTime) {
-        return additionNull(localDateTime.getHour()) +
-                ":" + additionNull(localDateTime.getMinute()) +
-                " " + additionNull(localDateTime.getDayOfMonth()) +
+        return additionNull(localDateTime.getDayOfMonth()) +
                 "." + additionNull(localDateTime.getMonthValue()) +
                 "." + localDateTime.getYear();
     }

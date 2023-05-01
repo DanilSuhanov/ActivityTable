@@ -10,5 +10,5 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Task findTaskById(long id);
     Task findTaskByTitle(String title);
-    List<Task> findTasksByExpired(boolean expired);
+    List<Task> findTaskByExpired(boolean expired);
 }

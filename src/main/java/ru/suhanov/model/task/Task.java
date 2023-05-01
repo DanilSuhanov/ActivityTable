@@ -3,6 +3,7 @@ package ru.suhanov.model.task;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.suhanov.Util;
 import ru.suhanov.model.Member;
 
 import javax.persistence.*;
@@ -27,7 +28,9 @@ public class Task {
     private boolean verification;
 
     //Deadlines
+    @JsonIgnore
     private LocalDateTime deadline;
+    private String deadlineInStringFormat;
     private boolean expired;
 
     @OneToMany(mappedBy="task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -42,6 +45,7 @@ public class Task {
         this.description = description;
         this.completeness = completeness;
         this.deadline = deadline;
+        deadlineInStringFormat = Util.dateToString(deadline);
     }
 
     public void addMember(Member member) {

@@ -2,6 +2,7 @@ package ru.suhanov.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.suhanov.model.User;
 import ru.suhanov.model.bot.Notification;
 import ru.suhanov.repositoty.NotificationRepository;
 import ru.suhanov.service.interfaces.NotificationService;
@@ -30,5 +31,16 @@ public class NotificationServiceImp implements NotificationService {
             notificationRepository.deleteAll();
         }
         return notifications;
+    }
+
+    @Override
+    public void notification(String content, User user) {
+        if (user.getTelegramUser() != null) {
+            Notification notification = new Notification();
+            notification.setContent(content);
+            notification.setTo(user.getTelegramUser());
+
+            add(notification);
+        }
     }
 }

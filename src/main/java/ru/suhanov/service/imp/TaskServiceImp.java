@@ -8,24 +8,25 @@ import ru.suhanov.model.task.Task;
 import ru.suhanov.model.User;
 import ru.suhanov.model.task.TaskMessage;
 import ru.suhanov.repositoty.TaskRepository;
-import ru.suhanov.service.interfaces.MemberService;
+import ru.suhanov.service.interfaces.NotificationService;
 import ru.suhanov.service.interfaces.TaskService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class TaskServiceImp implements TaskService {
 
     private final TaskRepository taskRepository;
-    private final MemberService memberService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public TaskServiceImp(TaskRepository taskRepository, MemberService memberService) {
+    public TaskServiceImp(TaskRepository taskRepository, NotificationService notificationService) {
         this.taskRepository = taskRepository;
-        this.memberService = memberService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -74,18 +75,31 @@ public class TaskServiceImp implements TaskService {
     }
 
     @Override
-    public void checkAllTasksOnExpired() {
-        System.out.println("Чек метод начал выполняться! " + Util.dateToString(LocalDateTime.now()));
-        int counter = 0;
-        List<Task> tasks = taskRepository.findTasksByExpired(false);
+    public void checkAllTasks() {
+        List<Task> tasks = taskRepository.findTaskByExpired(false);
+        checkOnExpired(tasks);
+        checkNotification(tasks);
+    }
+
+    private void checkNotification(List<Task> tasks) {
+        System.out.println("Start");
         for (Task task : tasks) {
-            if (task.getDeadline().isBefore(LocalDateTime.now())) {
-                counter++;
+            if (task.getDeadline().isAfter(LocalDateTime.now().minusDays(1))) {
+                for (User user : task.getMembers().stream().map(Member::getUser).collect(Collectors.toList())) {
+                    notificationService.notification("Скоро истечёт срок выполнения задачи - "
+                            + task.getTitle(), user);
+                }
+            }
+        }
+        System.out.println("End");
+    }
+
+    private void checkOnExpired(List<Task> tasks) {
+        for (Task task : tasks) {
+            if (task.getDeadline().isBefore(LocalDateTime.now().minusDays(1))) {
                 task.setExpired(true);
                 taskRepository.save(task);
             }
         }
-        System.out.println("Чек метод закончил выполняться! Новых просроченных задач - " + counter
-                + ". Время - " + Util.dateToString(LocalDateTime.now()));
     }
 }
