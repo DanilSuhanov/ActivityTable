@@ -82,7 +82,6 @@ public class TaskServiceImp implements TaskService {
     }
 
     private void checkNotification(List<Task> tasks) {
-        System.out.println("Start");
         for (Task task : tasks) {
             if (task.getDeadline().isAfter(LocalDateTime.now().minusDays(1))) {
                 for (User user : task.getMembers().stream().map(Member::getUser).collect(Collectors.toList())) {
@@ -91,7 +90,6 @@ public class TaskServiceImp implements TaskService {
                 }
             }
         }
-        System.out.println("End");
     }
 
     private void checkOnExpired(List<Task> tasks) {
