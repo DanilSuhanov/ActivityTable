@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.suhanov.service.imp.PreInitService;
 import ru.suhanov.service.interfaces.UserService;
 
 @Service("userDetailsService")
